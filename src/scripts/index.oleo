@@ -1,0 +1,24 @@
+head: {
+    title: "Bienvenido"
+	meta: [
+		"descripcion,Descripcion original"
+	]
+    meta()
+}
+
+doc: {
+    links(index,ejemplo)
+    #! comentario !#
+    h1: Hola mundo span: bienvenidos !h1
+    h2("css:mi_clase") Hola !h2
+    a("to:about") Go !a
+    h1: Que tal !h1
+    image("mi_imagen.png","css:mi_clase")
+
+    css:
+        .mi_clase {
+            color: #0a8cbd;
+            text-align: center;
+        }
+    !css
+}

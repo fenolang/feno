@@ -1,0 +1,5 @@
+doc: {
+    h1: Acerca de !h1
+    p: Hola de nuevo !p
+    a("to:index.html") Inicio !a
+}
