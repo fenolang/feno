@@ -5,9 +5,10 @@
     "\\app\\functions",
     "\\app\\functions\\Oleo",
     "\\app\\functions\\OleoScript",
+    "\\app\\functions\\OleoScript\\models",
     "\\src",
     "\\src\\components"
   ],
-  "SelectedNode": "\\app\\functions\\Oleo\\styles.js",
+  "SelectedNode": "\\app\\functions\\OleoScript\\models\\Instance.ts",
   "PreviewInSolutionExplorer": false
 }

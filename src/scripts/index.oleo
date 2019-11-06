@@ -11,8 +11,8 @@ doc: {
     #! comentario !#
     h1: Hola mundo span: bienvenidos !h1
     h2("css:mi_clase") Hola !h2
-    a("to:about") Go !a
-    h1: Que tal !h1
+    a("to:about") {{hola2}} !a
+    h1: {{hola}} !h1
     image("mi_imagen.png","css:mi_clase")
 
     css:
@@ -22,3 +22,8 @@ doc: {
         }
     !css
 }
+
+new Oleo({
+    def hola = "Bienvenido";
+    def hola2 = "Hola Mundo";
+})
