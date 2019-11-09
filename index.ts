@@ -1,6 +1,7 @@
 const fse = require('fs-extra');
 const clear = require('clear');
 const listen = require('./functions/Core/server');
+const path = require('path');
 
 //Modulos
 const Core = require('./functions/Core/main-process');
@@ -20,4 +21,11 @@ async function server() {
 server();
 main();
 
-export {}
+module.exports = {
+    run: () => {
+        server();
+        main();
+    }
+}
+
+export { }

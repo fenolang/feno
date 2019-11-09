@@ -1,6 +1,6 @@
 const functions = require('./compile');
 const component_functions = require('./compile-components');
-const head = require('./../OleoScript/head');
+const head = require('./../Graphtml/head');
 const images = require('./images');
 
 module.exports = {

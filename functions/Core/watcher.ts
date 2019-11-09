@@ -1,6 +1,7 @@
 const fse = require('fs-extra');
 const path = require('path');
 const emoji = require('node-emoji');
+const base = process.cwd();
 
 const Core = require('./main-process');
 const Components = require('./components'); // Módulo $Watch para componentes
@@ -23,14 +24,14 @@ module.exports = {
 };
 
 function $watchChanges() {
-    fse.readdir('./src/scripts', (err:string, files:string[]):boolean => {
+    fse.readdir(`${base}/src/scripts`, (err:string, files:string[]):boolean => {
         files.forEach(file => {
             let ext:string = path.extname(file);
-            if (ext === '.oleo') {
+            if (ext === '.gh') {
                 fse.readFile(`./src/scripts/${file}`, 'utf8', async (err:string, data:string) => {
                     let basename:string = path.basename(file, path.extname(file));
                     let content:string = await Core.Process(data, 'script', basename);
-                    fse.writeFile(`./app/public/${basename}.html`, content, (err:string) => {
+                    fse.writeFile(`./public/${basename}.html`, content, (err:string) => {
                         if (err) throw err;
                     });
                 });
@@ -41,15 +42,15 @@ function $watchChanges() {
 }
 
 function $watchDeletedScripts() {
-    fse.readdir('./app/public', (err:string, files:string[]):boolean => {
+    fse.readdir('./public', (err:string, files:string[]):boolean => {
         files.forEach(file => {
             if (file != 'css') {
                 let ext:string = path.extname(file);
                 let basename:string = path.basename(file, path.extname(file));
                 if (ext == '.html') {
-                    fse.pathExists(`./src/scripts/${basename}.oleo`, (err:string, exists:boolean) => {
+                    fse.pathExists(`./src/scripts/${basename}.gh`, (err:string, exists:boolean) => {
                         if (!exists) {
-                            fse.remove(`./app/public/${file}`, (err:string) => {
+                            fse.remove(`./public/${file}`, (err:string) => {
                                 if (err) console.error(err);
                             });
                         }
@@ -62,13 +63,13 @@ function $watchDeletedScripts() {
 }
 
 function $watchStyles() {
-    fse.readdir('./src/styles', (err:string, files:string[]):boolean => {
+    fse.readdir(`${base}/src/styles`, (err:string, files:string[]):boolean => {
         if (err) console.error(err);
         if (files.length) {
             files.forEach(file => {
                 let ext:string = path.extname(file);
                 if (ext == '.css') {
-                    fse.copyFile(`./src/styles/${file}`, `./app/public/css/${file}`, (err:string) => {
+                    fse.copyFile(`./src/styles/${file}`, `./public/css/${file}`, (err:string) => {
                         if (err) console.error(err);
                     });
                 }
@@ -79,7 +80,7 @@ function $watchStyles() {
 }
 
 function $watchDeletedStyles() {
-    fse.readdir('./app/public/css', (err:string, files:string[]):boolean => {
+    fse.readdir('./public/css', (err:string, files:string[]):boolean => {
         if (err) console.error(err);
         if (files.length) {
             files.forEach(file => {
@@ -88,7 +89,7 @@ function $watchDeletedStyles() {
                     fse.pathExists(`./src/styles/${file}`, (err:string, exists:boolean) => {
                         if (err) console.error(err);
                         if (!exists) {
-                            fse.remove(`./app/public/css/${file}`, (err:string) => {
+                            fse.remove(`./public/css/${file}`, (err:string) => {
                                 if (err) console.error(err);
                             });
                         }

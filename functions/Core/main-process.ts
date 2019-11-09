@@ -1,8 +1,8 @@
 const emoji = require('node-emoji');
-import { searchInstance, $run } from './../OleoScript/main';
-const styles = require('./../Oleo/styles');
+import { searchInstance, $run } from '../Graphtml/main';
+const styles = require('./../Graph/styles');
 
-const interpretation = require('./../Oleo/interpretation');
+const interpretation = require('./../Graph/interpretation');
 
 module.exports = {
     Process: async function(code:string, type:string, name:string) {

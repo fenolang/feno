@@ -16,7 +16,7 @@ module.exports = { $Watch: () => {
                         if (err) console.error(err);
                         sfiles.forEach(sfile => {
                             const basename_script:string = path.basename(sfile, path.extname(sfile));
-                            fse.readFile(`./app/public/${basename_script}.html`,'utf8',(err:string,sdata:string) => {
+                            fse.readFile(`./public/${basename_script}.html`,'utf8',(err:string,sdata:string) => {
                                 let lines:string[] = sdata.split(/\n/);
                                 lines.forEach(async (line) => {
                                     var call:string = line.split('call(').pop().split(')')[0]; // Buscar llamados a componentes
@@ -41,7 +41,7 @@ module.exports = { $Watch: () => {
                                         // Eliminar el llamado en Nue e insertar el contenido del componente
                                         let html:string = await Core.Process(data,'component');
                                         sdata = sdata.split(tag).join(html);
-                                        fse.writeFile(`./app/public/${basename_script}.html`,sdata,(err:string) => {
+                                        fse.writeFile(`./public/${basename_script}.html`,sdata,(err:string) => {
                                             if (err) console.error(err);
                                             let lines:string[] = sdata.split(/\n/);
                                             lines.forEach(async (line) => {
@@ -71,7 +71,7 @@ module.exports = { $Watch: () => {
                                                                 // Eliminar el llamado en Nue e insertar el contenido del componente
                                                                 let html:string = await Core.Process(data,'component');
                                                                 sdata = sdata.split(tag).join(html);
-                                                                fse.writeFile(`./app/public/${basename_script}.html`,sdata,err => {
+                                                                fse.writeFile(`./public/${basename_script}.html`,sdata,err => {
                                                                     if (err) console.error(err);
                                                                     let lines:string[] = sdata.split(/\n/);
                                                                     lines.forEach(async (line) => {
@@ -101,7 +101,7 @@ module.exports = { $Watch: () => {
                                                                                         // Eliminar el llamado en Nue e insertar el contenido del componente
                                                                                         let html:string = await Core.Process(data,'component');
                                                                                         sdata = sdata.split(tag).join(html);
-                                                                                        fse.writeFile(`./app/public/${basename_script}.html`,sdata,err => {
+                                                                                        fse.writeFile(`./public/${basename_script}.html`,sdata,err => {
                                                                                             if (err) console.error(err);
                                                                                             let lines:string[] = sdata.split(/\n/);
                                                                                             lines.forEach(async (line) => {
@@ -131,7 +131,7 @@ module.exports = { $Watch: () => {
                                                                                                                 // Eliminar el llamado en Nue e insertar el contenido del componente
                                                                                                                 let html:string = await Core.Process(data,'component');
                                                                                                                 sdata = sdata.split(tag).join(html);
-                                                                                                                fse.writeFile(`./app/public/${basename_script}.html`,sdata,err => {
+                                                                                                                fse.writeFile(`./public/${basename_script}.html`,sdata,err => {
                                                                                                                     if (err) console.error(err);
                                                                                                                 });
                                                                                                             }

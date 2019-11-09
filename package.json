@@ -1,19 +1,32 @@
 {
   "name": "graphtml",
-  "version": "1.0.0",
+  "version": "0.5.4",
   "description": "The framework that web devs needs",
-  "main": "app/index.ts",
+  "main": "index.ts",
   "scripts": {
-    "test": "node app/index.js",
+    "test": "node index.js",
     "tsc": "tsc",
-    "dev": "ts-node-dev --respawn --transpileOnly ./app/index.ts",
-    "watch": "nodemon --watch src"
+    "watch": "ts-node-dev --respawn --transpileOnly ./index.ts",
+    "dev": "nodemon --watch src"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/graphjs/graphtml.git"
+  },
+  "bugs": {
+    "url": "https://github.com/graphjs/graphtml/issues"
+  },
+  "keywords": [
+    "Graphtml",
+    "framework",
+    "Html"
+  ],
   "author": "YahirGNz",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {},
   "dependencies": {
     "@types/express": "^4.17.1",
+    "app-root-path": "^3.0.0",
     "cheerio": "^1.0.0-rc.3",
     "clear": "^0.1.0",
     "express": "^4.17.1",
