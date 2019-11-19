@@ -62,7 +62,7 @@ export default class Instance {
     }
     
     public destroy(code: string) {
-        code = code.split(/new Oleo ?\({[\s\S]*}\)/).join('');
+        code = code.split(/new Darl ?\({[\s\S]*}\)/).join('');
         return code;
     }
     

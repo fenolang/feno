@@ -1,7 +1,7 @@
 {
-  "name": "graphtml",
-  "version": "0.5.4",
-  "description": "The framework that web devs needs",
+  "name": "darl",
+  "version": "0.5.9",
+  "description": "A new programming language for great web development.",
   "main": "index.ts",
   "scripts": {
     "test": "node index.js",
@@ -17,25 +17,25 @@
     "url": "https://github.com/graphjs/graphtml/issues"
   },
   "keywords": [
-    "Graphtml",
-    "framework",
-    "Html"
+    "Darl",
+    "Darlene",
+    "Programming Language",
+    "Language",
+    "Html",
+    "JavaScript"
   ],
   "author": "YahirGNz",
   "license": "MIT",
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/express": "^4.17.2",
+    "nodemon": "^1.19.4",
+    "ts-node": "^8.5.2",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.7.2"
+  },
   "dependencies": {
-    "@types/express": "^4.17.1",
-    "app-root-path": "^3.0.0",
-    "cheerio": "^1.0.0-rc.3",
     "clear": "^0.1.0",
     "express": "^4.17.1",
-    "fs-extra": "^8.1.0",
-    "jsdom": "^15.1.1",
-    "node-emoji": "^1.10.0",
-    "nodemon": "^1.19.3",
-    "ts-node": "^8.4.1",
-    "ts-node-dev": "^1.0.0-pre.43",
-    "typescript": "^3.6.4"
+    "fs-extra": "^8.1.0"
   }
 }

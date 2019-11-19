@@ -1,8 +1,7 @@
-const emoji = require('node-emoji');
-import { searchInstance, $run } from '../Graphtml/main';
-const styles = require('./../Graph/styles');
+import { searchInstance, $run } from '../Syntax/main';
+const styles = require('./../Darl/styles');
 
-const interpretation = require('./../Graph/interpretation');
+const interpretation = require('./../Darl/interpretation');
 
 module.exports = {
     Process: async function(code:string, type:string, name:string) {

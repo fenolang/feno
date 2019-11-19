@@ -1,15 +1,9 @@
 const fse = require('fs-extra');
 const path = require('path');
-const emoji = require('node-emoji');
 const base = process.cwd();
 
 const Core = require('./main-process');
 const Components = require('./components'); // Módulo $Watch para componentes
-
-function msg(text: string): void {
-    let emoji_msg: string = emoji.emojify(text, null, null);
-    console.log(emoji_msg);
-}
 
 module.exports = {
     watch: async () => {
@@ -18,7 +12,7 @@ module.exports = {
         await $watchStyles();
         await $watchChanges();
         await Components.$Watch();
-        msg(`< \u{1F33B}  Compiled Successfully!    `);
+        console.log(`< \u{1F33B}  Compiled Successfully!    `);
         return 'yes';
     }
 };
@@ -27,7 +21,7 @@ function $watchChanges() {
     fse.readdir(`${base}/src/scripts`, (err: string, files: string[]): boolean => {
         files.forEach(file => {
             let ext: string = path.extname(file);
-            if (ext === '.gh') {
+            if (ext === '.darl') {
                 fse.readFile(`${base}/src/scripts/${file}`, 'utf8', async (err: string, data: string) => {
                     let basename: string = path.basename(file, path.extname(file));
                     let content: string = await Core.Process(data, 'script', basename);
@@ -54,7 +48,7 @@ function $watchDeletedScripts() {
                 let ext: string = path.extname(file);
                 let basename: string = path.basename(file, path.extname(file));
                 if (ext == '.html') {
-                    fse.pathExists(`${base}/src/scripts/${basename}.gh`, (err: string, exists: boolean) => {
+                    fse.pathExists(`${base}/src/scripts/${basename}.darl`, (err: string, exists: boolean) => {
                         if (!exists) {
                             fse.remove(
                                 /*`./public/${file}`*/

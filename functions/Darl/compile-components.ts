@@ -1,12 +1,3 @@
-const { JSDOM } = require('jsdom');
-
-function $c(html):string {
-    let $ = new JSDOM();
-    var div = $.window.document.createElement('div');
-    div.innerHTML = html;
-    return div.innerHTML;
-}
-
 module.exports = {
     find_doc: function(doc:string):string { /** Encontrar el documento */
         doc = doc.match(/doc: {([\s\S]*)}/)[1];
@@ -384,13 +375,6 @@ module.exports = {
             let links_tag:string = `links(${links_content})`;
             html = html.split(links_tag).join('');
         }
-        return html;
-    },
-
-    fixTags: function(html:string):string { /** Cerrar etiquetas sin cerrar */
-        let doc:string = this.find_doc(html);
-        let new_html:string = $c(doc);
-        html = html.split(doc).join(new_html);
         return html;
     }
 }

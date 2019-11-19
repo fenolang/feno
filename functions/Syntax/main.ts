@@ -2,7 +2,7 @@ import Instance from './models/Instance';
 
 export async function searchInstance(code: string): Promise<string> {
     return new Promise((resolve,reject) => {
-        if (/\bnew Oleo ?\({([\s\S]*?)}\)/g.test(code)) {
+        if (/\bnew Darl ?\({([\s\S]*?)}\)/g.test(code)) {
             let res = $run(code);
             resolve(res);
         } else {
