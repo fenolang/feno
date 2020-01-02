@@ -23,7 +23,7 @@ doc: {
     !css
 }
 
-new Oleo({
+new Feno ({
     def hola = "Bienvenido";
     def hola2 = "Hola Mundo";
 })

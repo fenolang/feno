@@ -32,11 +32,11 @@ module.exports = {
         } else {
             await new Promise((resolve, reject) => { // Iniciar promesa
                 // Comprar existencia de meta single file
-                fse.pathExists(`${base}/src/meta/_${name}.nue`, async (err:string, exists:boolean) => {
+                fse.pathExists(`${base}/src/meta/_${name}.feno`, async (err:string, exists:boolean) => {
                     if (err) return console.error(err);
                     if (exists) { // si existe...
                         if (head_content.indexOf('meta(') != -1) {
-                            fse.readFile(`${base}/src/meta/_${name}.nue`, 'utf8', (err:string, data:string) => { // Obtener contenido
+                            fse.readFile(`${base}/src/meta/_${name}.feno`, 'utf8', (err:string, data:string) => { // Obtener contenido
                                 if (err) return console.error(err);
                                 if (data) {
                                     /** Proceso de Interpretación del archivo */

@@ -4,10 +4,8 @@
   "description": "A new programming language for great web development.",
   "main": "index.ts",
   "scripts": {
-    "test": "node index.js",
     "tsc": "tsc",
-    "watch": "ts-node-dev --respawn --transpileOnly ./index.ts",
-    "dev": "nodemon --watch src"
+    "dev": "cross-env FENO_ENV=local nodemon --watch src"
   },
   "repository": {
     "type": "git",
@@ -17,8 +15,8 @@
     "url": "https://github.com/graphjs/graphtml/issues"
   },
   "keywords": [
-    "Darl",
-    "Darlene",
+    "Feno",
+    "Feno",
     "Programming Language",
     "Language",
     "Html",
@@ -28,6 +26,8 @@
   "license": "MIT",
   "devDependencies": {
     "@types/express": "^4.17.2",
+    "@types/node": "^13.1.2",
+    "cross-env": "^6.0.3",
     "nodemon": "^1.19.4",
     "ts-node": "^8.5.2",
     "ts-node-dev": "^1.0.0-pre.44",
