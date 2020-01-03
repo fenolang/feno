@@ -1,40 +1,52 @@
-const fse = require('fs-extra');
-const path = require('path');
+import { getPublic } from '@config/env';
+import * as Core from '@core/main-process';
+import * as find from '@core/instances/find';
+import Error from '@syntax/models/Error';
+import fse from 'fs-extra';
+import path from 'path';
 const base = process.cwd();
-const { getPublic } = require('../../config/env');
 
-const Core = require('./main-process');
-const Components = require('./components'); // Módulo $Watch para componentes
-
-module.exports = {
-    watch: async () => {
-        await $watchDeletedStyles();
-        await $watchDeletedScripts();
-        await $watchStyles();
+export async function watch () {
+    return new Promise(async (resolve, reject) => {
+        $watchDeletedStyles();
+        $watchDeletedScripts();
+        $watchStyles();
         await $watchChanges();
-        //await Components.$Watch();
-        console.log(`< \u{1F33B}  Compiled Successfully!    `);
-        return 'yes';
-    }
-};
+        resolve();
+        console.log("");
+        console.log(`< \u{1F33B}  Compiled Successfully!    `);    
+    })
+}
 
 function $watchChanges() {
-    fse.readdir(`${base}/src/pages`, (err: string, files: string[]): boolean => {
-        files.forEach(file => {
-            let ext: string = path.extname(file);
-            if (ext === '.feno') {
-                fse.readFile(`${base}/src/pages/${file}`, 'utf8', async (err: string, data: string) => {
-                    let basename: string = path.basename(file, path.extname(file));
-                    let content: string = await Core.Process(data, 'script', basename);
-                    fse.writeFile(
-                        path.join(getPublic(),`${basename}.html`),/*path.dirname(require.resolve('graphtml')),*/ content, (err: string) => {
-                        if (err) throw err;
+    return new Promise(async (resolve, reject) => {
+        fse.readdir(`${base}/src/pages`, (err: string, files: string[]) => {
+            files.forEach(file => {
+                let ext: string = path.extname(file);
+                if (ext === '.feno') {
+                    fse.readFile(`${base}/src/pages/${file}`, 'utf8', async (err: string, data: string) => {
+                        let basename: string = path.basename(file, path.extname(file));
+                        if (find.doc(data)) {
+                            let content: string = "";
+                            content = await Core.Process(data, 'script', basename);
+                            fse.writeFile(path.join(getPublic(), `${basename}.html`), content, (err: string) => {
+                                if (err) throw err;
+                                resolve();
+                            });
+                        } else {
+                            new Error({
+                                text: "Doc instance was not found!",
+                                at: basename,
+                                solution: `Declare the Doc Instance inside ${basename}.feno file`,
+                                info: "http://fenolang.org/docs/doc_instance"
+                            })
+                        }
                     });
-                });
-            }
+                } else {
+                }
+            });
         });
-        return true;
-    });
+    })
 }
 
 function $watchDeletedScripts() {
@@ -113,4 +125,4 @@ function $watchDeletedStyles() {
     });
 }
 
-export { }
+export { };

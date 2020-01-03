@@ -1,31 +1,31 @@
-const functions = require('./compile');
-const component_functions = require('./compile-components');
-const head = require('./../Syntax/head');
-const images = require('./images');
+import * as functions from './compile';
+import * as component_functions from './compile-components';
+import * as images from './images';
+import * as head from '@syntax/head';
 
-module.exports = {
-    compile: async function(code:string,type:string,name:string) {
-        let html:string = code;
-
+export async function compile(code:string,type:string,name:string) {
+    let html: string = code;
+    await new Promise(async (resolve, reject) => {
         //html = await functions.deleteLinks(html);
 
         html = await images.$watch(html);
 
-        html = await functions.attributes(html);
+        //html = await functions.attributes(html); HTML DEPRECATED
 
-        html = await functions.tags(html);
+        //html = await functions.tags(html); HTML DEPRECATED
 
         html = await functions.jscompile(html);
 
         //html = await functions.fixTags(html);
 
-        html = await head.$watch(html,name);
+        html = await head.$watch(html, name);
 
         if (type == 'script') {
             html = functions.close_doc(html);
         } else {
             html = component_functions.close_doc(html);
         }
-        return html;
-    }
+        resolve();
+    })
+    return html;
 }

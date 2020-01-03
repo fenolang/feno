@@ -1,25 +1,25 @@
-const fse = require('fs-extra');
-const clear = require('clear');
-const listen = require('./functions/Core/server');
-const path = require('path');
+import 'module-alias/register'
+import clear from 'clear';
+import * as listen from '@core/server';
 
 //Modulos
-const Core = require('./functions/Core/main-process');
-const Watcher = require('./functions/Core/watcher');
+import * as Watcher from '@core/watcher';
 
 clear();
 
 async function main() {
-    await Watcher.watch();
+    return new Promise(async (resolve, reject) => {
+        await Watcher.watch();
+        resolve();
+    })
 }
 
 async function server() {
-    await listen.$on();
-    console.log("Server Running on { 8080 } port!");
+    return new Promise((resolve, reject) => {
+        listen.$on();
+        resolve();
+    })
 }
-
-server();
-main();
 
 module.exports = {
     run: () => {
@@ -28,4 +28,9 @@ module.exports = {
     }
 }
 
-export { }
+export async function run() {
+    await main();
+    await server();
+}
+
+run();

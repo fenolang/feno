@@ -1,29 +1,6 @@
 head: {
-    title: "Bienvenido"
-	meta: [
-		"descripcion,Descripcion original"
-	]
-    meta()
+    links(index)
 }
 
 doc: {
-    links(index,ejemplo)
-    #! comentario !#
-    h1: Hola mundo span: bienvenidos !h1
-    h2("css:mi_clase") Hola !h2
-    a("to:about") {{hola2}} !a
-    h1: {{hola}} !h1
-    image("mi_imagen.png","css:mi_clase")
-
-    css:
-        .mi_clase {
-            color: #0a8cbd;
-            text-align: center;
-        }
-    !css
 }
-
-new Feno ({
-    def hola = "Bienvenido";
-    def hola2 = "Hola Mundo";
-})

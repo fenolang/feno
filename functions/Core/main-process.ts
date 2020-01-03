@@ -1,15 +1,10 @@
-import { searchInstance, $run } from '../Syntax/main';
-const styles = require('./../Feno/styles');
+import { searchInstance, $run } from '@syntax/main';
+import * as styles from '@feno/styles';
+import * as interpretation from '@feno/interpretation';
 
-const interpretation = require('./../Feno/interpretation');
-
-module.exports = {
-    Process: async function(code:string, type:string, name:string) {
-        code = await searchInstance(code);
-        code = await styles.$watch(code);
-        code = await interpretation.compile(code,type,name);
-        return code;
-    }
+export async function Process(code:string, type:string, name:string) {
+    code = await searchInstance(code);
+    code = await styles.$watch(code);
+    code = await interpretation.compile(code,type,name);
+    return code;
 }
-
-export {}
