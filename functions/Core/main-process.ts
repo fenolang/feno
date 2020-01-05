@@ -4,7 +4,7 @@ import * as interpretation from '@feno/interpretation';
 
 export async function Process(code:string, type:string, name:string) {
     code = await searchInstance(code);
-    code = await styles.$watch(code);
+    code = await styles.$watch(code, name);
     code = await interpretation.compile(code,type,name);
     return code;
 }

@@ -1,6 +1,6 @@
 {
   "name": "feno",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "The programming language for great web development.",
   "main": "index.ts",
   "scripts": {
@@ -47,6 +47,7 @@
     "@core": "./functions/Core",
     "@instances": "./functions/Core/instances",
     "@feno": "./functions/Feno",
-    "@syntax": "./functions/Syntax"
+    "@syntax": "./functions/Syntax",
+    "@test": "./functions/Test"
   }
 }

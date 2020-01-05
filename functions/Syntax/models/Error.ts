@@ -32,7 +32,7 @@ export default class Error {
 
     formatMessage(): void {
         this.msg += `${BGRED}${WHITE}Error:${NORMAL}${RED} ${this.text}${NORMAL}\n`
-        this.msg += `\t${UNDER}at:${NORMAL} ${this.file}.feno file\n`
+        this.msg += `\t${UNDER}at:${NORMAL} ${this.file} file\n`
         this.msg += `\t${UNDER}${YELLOW}Solution:${NORMAL} ${YELLOW}${this.solution}${NORMAL}\n`
         this.msg += `\t${UNDER}${BLUE}More Info:${NORMAL} ${GREEN}${this.info}${NORMAL}\n`
     }
