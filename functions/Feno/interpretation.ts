@@ -8,7 +8,7 @@ export async function compile(code:string,type:string,name:string) {
     await new Promise(async (resolve, reject) => {
         //html = await functions.deleteLinks(html);
 
-        html = await images.$watch(html);
+        html = await images.$watch(html, name);
 
         //html = await functions.attributes(html); HTML DEPRECATED
 
