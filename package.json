@@ -25,7 +25,6 @@
   "author": "YahirGNz",
   "license": "MIT",
   "devDependencies": {
-    "@types/express": "^4.17.2",
     "@types/node": "^13.1.2",
     "cross-env": "^6.0.3",
     "module-alias": "^2.2.2",
@@ -36,9 +35,8 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "clear": "^0.1.0",
-    "express": "^4.17.1",
-    "fs-extra": "^8.1.0"
+    "fs-extra": "^8.1.0",
+    "node-static": "^0.7.11"
   },
   "_moduleAliases": {
     "@root": ".",

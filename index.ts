@@ -1,5 +1,5 @@
 import 'module-alias/register'
-import clear from 'clear';
+import clear from '@config/clear';
 import * as listen from '@core/server';
 
 //Modulos
