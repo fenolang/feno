@@ -9,6 +9,7 @@ export async function Process(code:string, type:string, name:string) {
     /** Search for external sources */
     code = await styles.$watch(code, name);
     code = await scripts.$watch(code, name);
+    code = await scripts.checkNoScript(code, name);
 
     /** Transpile */
     code = await interpretation.compile(code,type,name);

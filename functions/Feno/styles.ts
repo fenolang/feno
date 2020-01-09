@@ -19,7 +19,7 @@ export function checkInstance(code: string, filename: string):string {
             new Error({
                 text: "Head instance was not found!",
                 at: `${filename}.feno`,
-                solution: "You should declare a Head instance before declaring a Styles instance",
+                solution: "You should declare a Head instance before declaring inline styles",
                 info: `http://fenolang.org/docs/styles_instance`
             })
         }

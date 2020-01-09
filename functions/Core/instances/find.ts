@@ -12,6 +12,13 @@ export function transpiledHead(code: string): boolean {
         return false
 }
 
+export function noscript(code: string): boolean {
+    if (/noscript: ?{([\s\S]*?)}/.test(code))
+        return true
+    else
+        return false
+}
+
 export function doc(code: string): boolean {
     if (/doc: ?\n?.*?{[\s\S]*?}/.test(code))
         return true
