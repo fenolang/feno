@@ -1,4 +1,5 @@
 import Error from '@syntax/models/Error';
+import * as find from '@instances/find';
 
 function stylesError(filename): void {
     new Error({
@@ -9,6 +10,24 @@ function stylesError(filename): void {
     })
 }
 
+/** Styles instance */
+export function checkInstance(code: string, filename: string):string {
+    if (/styles ?\({\n([\s\S]*?)}\)/.test(code)) { // If we find a styles instance
+        if (find.transpiledHead(code)) { // Check head instance
+            code = code.replace(/styles ?\({\n([\s\S]*?)}\)/,'<style>\n$1</style>');
+        } else {
+            new Error({
+                text: "Head instance was not found!",
+                at: `${filename}.feno`,
+                solution: "You should declare a Head instance before declaring a Styles instance",
+                info: `http://fenolang.org/docs/styles_instance`
+            })
+        }
+    }
+    return code;
+}
+
+/** Styles function */
 export function $watch(code:string, filename: string):string {
     if (code) {
         if (/styles\(.*?\)/.test(code)) { // If the developer call the styles() function
