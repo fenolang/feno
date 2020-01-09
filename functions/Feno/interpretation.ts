@@ -1,6 +1,7 @@
 import * as functions from './compile';
 import * as component_functions from './compile-components';
 import * as images from './images';
+import * as styles from './styles';
 import * as head from '@syntax/head';
 
 export async function compile(code:string,type:string,name:string) {
@@ -18,7 +19,11 @@ export async function compile(code:string,type:string,name:string) {
 
         //html = await functions.fixTags(html);
 
+        // Head instance
         html = await head.$watch(html, name);
+
+        // Styles instance
+        html = await styles.checkInstance(html, name);
 
         if (type == 'script') {
             html = functions.close_doc(html);

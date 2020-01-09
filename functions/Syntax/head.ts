@@ -4,9 +4,13 @@ const base = process.cwd();
 
 export async function $watch(feno_code:string, name:string) {
     if (await find.head(feno_code)) {
-        let head_content: string = feno_code.split('head: {').pop().split('}')[0];
+        // DEPRECATED? let head_content: string = feno_code.split('head: {').pop().split('}')[0];
+        //let head_content: string = feno_code.replace(/head: ?\n?.*?{([\s\S]*?)\n}/,'$1');
+        let head_content: string = feno_code
+            .match(/head: ?\n?.*?{([\s\S]*?)\n}/)[0]
+            .replace(/head: ?\n?.*?{([\s\S]*?)\n}/, '$1');
         // Esta variable será el head que recibira modificaciones de contenido: meta, title, etc...
-        let head_code: string = `head: {${head_content}}`;
+        let head_code: string = `head: {${head_content}\n}`;
         // Esta variable será el head pero sin modificaciones del developer...
         let head_code_without_modifications: string = head_code;
 
@@ -61,14 +65,18 @@ export async function $watch(feno_code:string, name:string) {
         function replace_nue_head(code: string): string {
             var head_to_return: string = code;
             head_to_return = head_to_return.replace(/^\s*\n/gm, ''); // REMOVE BLANK LINES
-            head_to_return = head_to_return.split('head: {').join('<head>');
-            head_to_return = head_to_return.split('}').join('</head>');
+            head_to_return = head_to_return.replace(/head: ?\n?.*?{([\s\S]*?)\n}/g,'<head>$1\n</head>')
+            /** DEPRECATED ? */
+            //head_to_return = head_to_return.split('head: {').join('<head>');
+            //head_to_return = head_to_return.split('}').join('</head>');
             return head_to_return;
         }
 
-        let final_head_code: string = await replace_nue_head(head_code);
+        // DEPRECATED? let final_head_code: string = await replace_nue_head(head_code);
         // Remover Head escrito en NueCode e insertar Head en HTML
-        feno_code = feno_code.split(head_code_without_modifications).join(final_head_code);
+        // TESTING: feno_code = feno_code.split(head_code_without_modifications).join(final_head_code);
+        head_code = head_code.replace(/head: ?\n?.*?{([\s\S]*?)\n}/,`<head>$1\n</head>`);
+        feno_code = feno_code.replace(/head: ?\n?.*?{([\s\S]*?)\n}/g, head_code)
         return feno_code;
     } else {
         return feno_code;
