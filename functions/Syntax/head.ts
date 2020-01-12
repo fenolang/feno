@@ -1,8 +1,10 @@
-import fse from 'fs-extra';
 import * as find from '@instances/find';
+import Error from '@syntax/models/Error';
+import fse from 'fs-extra';
+import { rejects } from 'assert';
 const base = process.cwd();
 
-export async function $watch(feno_code:string, name:string) {
+export async function $watch(feno_code:string, filename:string) {
     if (await find.head(feno_code)) {
         // DEPRECATED? let head_content: string = feno_code.split('head: {').pop().split('}')[0];
         //let head_content: string = feno_code.replace(/head: ?\n?.*?{([\s\S]*?)\n}/,'$1');
@@ -21,34 +23,62 @@ export async function $watch(feno_code:string, name:string) {
         if (/meta: ?\[/.test(head_content)) { /** Si se ha declarado un meta */
             let meta_content: string = head_content.split(/meta: ?\[/).pop().split(/\]/)[0]; // Obtener contenido del meta
             meta_content = meta_content.replace(/^\s*/gm, ''); // Remover tabs
-            let old_meta_content: string = meta_content;
-            meta_content = meta_content.replace(/"charset:(.*?)",?/g, '<meta charset="$1">');
-            meta_content = meta_content.replace(/"fb-(.*?),(.*?)",?/g, '<meta property="og:$1" content="$2">');
-            meta_content = meta_content.replace(/"twitter-(.*?),(.*?)",?/g, '<meta property="twitter:$1" content="$2">');
-            meta_content = meta_content.replace(/"(.*?),(.*?)",?/g, '<meta name="$1" content="$2">');
-            if (/meta\(\)/.test(head_content)) {
-                head_code = head_code.split(/meta\(\)/).join('');
+            /** Check if meta has content */
+            if (meta_content && /"(.*?),(.*?)"/g.test(meta_content)) {
+                meta_content = meta_content.replace(/"charset:(.*?)",?/g, '\t<meta charset="$1">');
+                meta_content = meta_content.replace(/"fb-(.*?),(.*?)",?/g, '\t<meta property="og:$1" content="$2">');
+                meta_content = meta_content.replace(/"twitter-(.*?),(.*?)",?/g, '\t<meta property="twitter:$1" content="$2">');
+                meta_content = meta_content.replace(/"(.*?),(.*?)",?/g, '\t<meta name="$1" content="$2">');
+                meta_content = meta_content.replace(/"viewport",?/g, '\t<meta name="viewport" content="width=device-width, initial-scale=1">');
+                if (/meta\(\)/.test(head_content)) {
+                    head_code = head_code.split(/meta\(\)/).join('');
+                }
+                // Remove first tab in the meta (for indent)
+                meta_content = meta_content.substring(1);
+                head_code = head_code.replace(/meta: ?\[([\s\S]*).*?\n.*?]/gm, meta_content)// Reemplazar Meta
+            } else {
+                /** The meta has no content: return error */
+                new Error({
+                    text: "The Meta property need at least 1 element but got 0!",
+                    at: `${filename}.feno`,
+                    solution: "Declare at least one element inside Meta[] property.",
+                    info: "http://fenolang.org/docs/meta_elements#structure"
+                })
             }
-            head_code = head_code.replace(/meta: ?\[([\s\S]*).*?\n.*?]/g, meta_content)// Reemplazar Meta
         } else {
             await new Promise((resolve, reject) => { // Iniciar promesa
                 // Comprar existencia de meta single file
-                fse.pathExists(`${base}/src/meta/_${name}.feno`, async (err: string, exists: boolean) => {
+                fse.pathExists(`${base}/src/meta/_${filename}.feno`, async (err: string, exists: boolean) => {
                     if (err) return console.error(err);
                     if (exists) { // si existe...
                         if (head_content.indexOf('meta(') != -1) {
-                            fse.readFile(`${base}/src/meta/_${name}.feno`, 'utf8', (err: string, data: string) => { // Obtener contenido
+                            fse.readFile(`${base}/src/meta/_${filename}.feno`, 'utf8', (err: string, data: string) => { // Obtener contenido
                                 if (err) return console.error(err);
                                 if (data) {
                                     /** Proceso de Interpretación del archivo */
                                     data = data.split('[').join('');
                                     data = data.split(']').join('');
-                                    data = data.replace(/"charset:(.*?)",?/g, '<meta charset="$1">');
-                                    data = data.replace(/"fb-(.*?),(.*?)",?/g, '<meta property="og:$1" content="$2">');
-                                    data = data.replace(/"twitter-(.*?),(.*?)",?/g, '<meta property="twitter:$1" content="$2">');
-                                    data = data.replace(/"(.*?),(.*?)",?/g, '<meta name="$1" content="$2">');
-                                    head_code = head_code.split(/meta\(\)/).join(data); //Reemplazar meta() por contenido
-                                    resolve(); // Terminar promesa
+                                    data = data.replace(/^\s*/gm, ''); // Remover tabs
+                                    /** If meta has content */
+                                    if (data && /"(.*?),(.*?)"/g.test(data)) {
+                                        data = data.replace(/"charset:(.*?)",?/g, '\t<meta charset="$1">');
+                                        data = data.replace(/"fb-(.*?),(.*?)",?/g, '\t<meta property="og:$1" content="$2">');
+                                        data = data.replace(/"twitter-(.*?),(.*?)",?/g, '\t<meta property="twitter:$1" content="$2">');
+                                        data = data.replace(/"(.*?),(.*?)",?/g, '\t<meta name="$1" content="$2">');
+                                        data = data.replace(/"viewport",?/, '\t<meta name="viewport" content="width=device-width, initial-scale=1">');
+                                        // Delete first line break and first tab (indent file)
+                                        data = data.substring(1);
+                                        head_code = head_code.split(/meta\(\)/).join(data); //Reemplazar meta() por contenido
+                                        resolve(); // Terminar promesa
+                                    } else {
+                                        /** The meta has no content: return error */
+                                        new Error({
+                                            text: "The Meta single file need at least 1 element but got 0!",
+                                            at: `${filename}.feno and _${filename}.feno`,
+                                            solution: "Declare at least one element inside your Meta[] single file.",
+                                            info: "http://fenolang.org/docs/meta_elements#structure"
+                                        })
+                                    }
                                 }
                             });
                         } else {

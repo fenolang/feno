@@ -1,5 +1,5 @@
 import * as functions from './compile';
-import * as component_functions from './compile-components';
+//import * as component_functions from './compile-components';
 import * as images from './images';
 import * as styles from './styles';
 import * as head from '@syntax/head';
@@ -27,9 +27,9 @@ export async function compile(code:string,type:string,name:string) {
 
         if (type == 'script') {
             html = functions.close_doc(html);
-        } else {
+        } /*else {
             html = component_functions.close_doc(html);
-        }
+        }*/
         resolve();
     })
     return html;
