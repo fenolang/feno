@@ -1,6 +1,7 @@
 import { getPublic } from '@config/env';
 import * as find from '@core/instances/find';
 import * as Core from '@core/main-process';
+import * as Components from '@feno/components';
 import Error from '@syntax/models/Error';
 import fse from 'fs-extra';
 import path from 'path';
@@ -11,6 +12,7 @@ export async function watch () {
         $watchDeletedStyles();
         $watchDeletedScripts();
         $watchStyles();
+        await Components.transpile();
         await $watchChanges();
         resolve();
         console.log("");

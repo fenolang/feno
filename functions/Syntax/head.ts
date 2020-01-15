@@ -92,23 +92,23 @@ export async function $watch(feno_code:string, filename:string) {
             });
         }
 
-        function replace_nue_head(code: string): string {
-            var head_to_return: string = code;
-            head_to_return = head_to_return.replace(/^\s*\n/gm, ''); // REMOVE BLANK LINES
-            head_to_return = head_to_return.replace(/head: ?\n?.*?{([\s\S]*?)\n}/g,'<head>$1\n</head>')
-            /** DEPRECATED ? */
-            //head_to_return = head_to_return.split('head: {').join('<head>');
-            //head_to_return = head_to_return.split('}').join('</head>');
-            return head_to_return;
+        /** v.0.7.0-beta: Check if a component is being called */
+        if (/@(.*?)\((.*?)?\)/g.test(feno_code)) {
+            feno_code = feno_code.replace(/@(.*?)\((.*?)?\)/g,'<$1></$1>')
         }
 
         // DEPRECATED? let final_head_code: string = await replace_nue_head(head_code);
         // Remover Head escrito en NueCode e insertar Head en HTML
         // TESTING: feno_code = feno_code.split(head_code_without_modifications).join(final_head_code);
-        head_code = head_code.replace(/head: ?\n?.*?{([\s\S]*?)\n}/,`<head>$1\n</head>`);
+        let components_tag = `<script src="./scripts/components.js"></script>`
+        head_code = head_code.replace(/head: ?\n?.*?{([\s\S]*?)\n}/,`<head>$1${components_tag}\n</head>`);
         feno_code = feno_code.replace(/head: ?\n?.*?{([\s\S]*?)\n}/g, head_code)
         return feno_code;
     } else {
+        /** v.0.7.0-beta: Check if a component is being called */
+        if (/@(.*?)\((.*?)?\)/g.test(feno_code)) {
+            feno_code = feno_code.replace(/@(.*?)\((.*?)?\)/g, '<$1></$1>')
+        }
         return feno_code;
     }
 }

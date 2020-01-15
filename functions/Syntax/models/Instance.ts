@@ -33,7 +33,7 @@ export default class Instance {
     }
     
     public getInstance(code: string): void {
-        code = code.split(/\bnew Oleo ?\({/).pop().split(/}\)/)[0];
+        code = code.split(/\bnew Feno ?\({/).pop().split(/}\)/)[0];
         this.content = code;
     }
     
