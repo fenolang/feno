@@ -25,3 +25,10 @@ export function doc(code: string): boolean {
     else
         return false
 }
+
+export function component(code: string): boolean {
+    if (/declare Component ?\('(.*?)', ?{([\s\S]*?)}\)/.test(code))
+        return true
+    else
+        return false 
+}

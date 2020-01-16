@@ -93,8 +93,8 @@ export async function $watch(feno_code:string, filename:string) {
         }
 
         /** v.0.7.0-beta: Check if a component is being called */
-        if (/@(.*?)\((.*?)?\)/g.test(feno_code)) {
-            feno_code = feno_code.replace(/@(.*?)\((.*?)?\)/g,'<$1></$1>')
+        if (/@(.*?) ?\((.*?)\)/g.test(feno_code)) {
+            feno_code = feno_code.replace(/@(.*?) ?\((.*?)\)/g,'<$1 $2></$1>')
         }
 
         // DEPRECATED? let final_head_code: string = await replace_nue_head(head_code);
@@ -106,8 +106,8 @@ export async function $watch(feno_code:string, filename:string) {
         return feno_code;
     } else {
         /** v.0.7.0-beta: Check if a component is being called */
-        if (/@(.*?)\((.*?)?\)/g.test(feno_code)) {
-            feno_code = feno_code.replace(/@(.*?)\((.*?)?\)/g, '<$1></$1>')
+        if (/@(.*?) ?\((.*?)\)/g.test(feno_code)) {
+            feno_code = feno_code.replace(/@(.*?) ?\((.*?)\)/g, '<$1 $2></$1>')
         }
         return feno_code;
     }
