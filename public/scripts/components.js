@@ -36,20 +36,16 @@ instance.querySelector('[name="subtitulo"]').innerHTML = this.subtitulo;
     }
 
     get titulo () {
-    console.log('get titulo()');
     return this.getAttribute('titulo');
 }
 
 set titulo (val) {
-    console.log(`set titulo(${val})`);
     this._titulo = val;
 }get subtitulo () {
-    console.log('get subtitulo()');
     return this.getAttribute('subtitulo');
 }
 
 set subtitulo (val) {
-    console.log(`set subtitulo(${val})`);
     this._subtitulo = val;
 }
 });

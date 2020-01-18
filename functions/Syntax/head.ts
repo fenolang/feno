@@ -24,7 +24,7 @@ export async function $watch(feno_code:string, filename:string) {
             let meta_content: string = head_content.split(/meta: ?\[/).pop().split(/\]/)[0]; // Obtener contenido del meta
             meta_content = meta_content.replace(/^\s*/gm, ''); // Remover tabs
             /** Check if meta has content */
-            if (meta_content && /"(.*?),(.*?)"/g.test(meta_content)) {
+            if (meta_content && /"(.*?),|:(.*?)"/g.test(meta_content)) {
                 meta_content = meta_content.replace(/"charset:(.*?)",?/g, '\t<meta charset="$1">');
                 meta_content = meta_content.replace(/"fb-(.*?),(.*?)",?/g, '\t<meta property="og:$1" content="$2">');
                 meta_content = meta_content.replace(/"twitter-(.*?),(.*?)",?/g, '\t<meta property="twitter:$1" content="$2">');
@@ -60,7 +60,7 @@ export async function $watch(feno_code:string, filename:string) {
                                     data = data.split(']').join('');
                                     data = data.replace(/^\s*/gm, ''); // Remover tabs
                                     /** If meta has content */
-                                    if (data && /"(.*?),(.*?)"/g.test(data)) {
+                                    if (data && /"(.*?),|:(.*?)"/g.test(data)) {
                                         data = data.replace(/"charset:(.*?)",?/g, '\t<meta charset="$1">');
                                         data = data.replace(/"fb-(.*?),(.*?)",?/g, '\t<meta property="og:$1" content="$2">');
                                         data = data.replace(/"twitter-(.*?),(.*?)",?/g, '\t<meta property="twitter:$1" content="$2">');

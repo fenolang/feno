@@ -1,27 +1,25 @@
 import Variable from './Variable';
+import Error from './Error';
+import * as layouts from '@feno/layouts';
 
 interface InstanceBody {
-    name: string,
     structure: string,
     inline: boolean,
-    content: string,
-    type: string
+    filename: string
 }
 
 export default class Instance {
     
-    name:string = "";
-    type:string = "";
-    content:string = "";
+    public content:string = "";
     inline:boolean = false;
     structure:string = "";
+    filename: string = "";
     
     constructor(body:InstanceBody) {
-        this.name = body.name;
-        this.type = body.type;
-        this.content = body.content;
         this.inline = body.inline;
         this.structure = body.structure;
+        this.filename = body.filename;
+        this.getInstance(body.structure)
     }
     
     private async run(name:string, value:string):Promise<boolean> {
@@ -34,11 +32,50 @@ export default class Instance {
     
     public getInstance(code: string): void {
         code = code.split(/\bnew Feno ?\({/).pop().split(/}\)/)[0];
-        this.content = code;
+        /** Check if Feno Class has content */
+        if (code && code.length && !/^\s*$/.test(code)) {
+            this.content = code;
+        } else {
+            new Error({
+                text: 'Feno class was declared without reason!',
+                at: `/pages/${this.filename}.feno`,
+                solution: `You must declare the Feno class only if you're going to use it`,
+                info: `http://fenolang.org/docs/feno_class`
+            })
+        }
+    }
+
+    public async layouts() {
+        return new Promise(async (resolve, reject) => {
+            // If the instance has a layout declared
+            if (/this\.layout ?= ?"(.*?)",?/.test(this.content)) {
+                let layout_name: string = this.content.match(/this\.layout ?= ?"(.*?)",?/)[1];
+                // If the layout property is not empty
+                if (layout_name && layout_name.length) {
+                    let layouts_instance = new layouts.Transpilation({
+                        code: this.structure,
+                        layout: layout_name,
+                        filename: this.filename
+                    })
+                    await layouts_instance.getResponse()
+                    this.structure = layouts_instance.res;
+                    resolve();
+                } else {
+                    new Error({
+                        text: 'Layout property has no content!',
+                        at: `/pages/${this.filename}.feno`,
+                        solution: "You should call a layout inside the layout property.",
+                        info: `http://fenolang.org/docs/layouts`
+                    })
+                }
+            } else {
+                resolve();
+            }
+        })
     }
     
-    public strings(code: string):string {
-        if (/def (.*?) ?= ?\"\D(.*?)\"/g.test(code)) {
+    public strings(): void {
+        if (/def (.*?) ?= ?\"\D(.*?)\"/g.test(this.structure)) {
             let content: string = this.content;
             let lines: string[] = content.split(/\n/);
             new Promise((resolve,reject) => {
@@ -57,13 +94,15 @@ export default class Instance {
                 })
                 resolve(this.structure);
             })
-            return this.structure;
         }
     }
     
-    public destroy(code: string) {
-        code = code.split(/new Feno ?\({[\s\S]*}\)/).join('');
-        return code;
+    public destroy(): void {
+        this.structure = this.structure.split(/new Feno ?\({[\s\S]*}\)/).join('');
+    }
+
+    public getContent(): string {
+        return this.structure;
     }
     
 }
