@@ -3,6 +3,7 @@ import * as functions from './compile';
 import * as images from './images';
 import * as styles from './styles';
 import * as head from '@syntax/head';
+import * as attributes from './attributes';
 
 export async function compile(code:string,type:string,name:string) {
     let html: string = code;
@@ -14,6 +15,8 @@ export async function compile(code:string,type:string,name:string) {
         //html = await functions.attributes(html); HTML DEPRECATED
 
         //html = await functions.tags(html); HTML DEPRECATED
+
+        html = attributes.transpile(html);
 
         html = await functions.jscompile(html);
 
