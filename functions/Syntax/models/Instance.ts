@@ -1,5 +1,6 @@
 import Variable from './Variable';
 import Error from './Error';
+import * as find from '@instances/find';
 import * as layouts from '@feno/layouts';
 
 interface InstanceBody {
@@ -24,6 +25,8 @@ export default class Instance {
     
     private async run(name:string, value:string):Promise<boolean> {
         return new Promise((resolve,reject) => {
+            // Remove string characters. ej: ""
+            value = value.replace(/"|'|`/g,'');
             this.structure = this.structure.split(`{{${name}}}`).join(value);
             this.structure = this.structure.split(`{{ ${name} }}`).join(value);
             resolve(true);
@@ -75,21 +78,26 @@ export default class Instance {
     }
     
     public strings(): void {
-        if (/def (.*?) ?= ?\"\D(.*?)\"/g.test(this.structure)) {
+        if (/*/def (.*?) ?= ?\"\D(.*?)\"/g.test(this.structure)*/find.variable(this.structure)) {
             let content: string = this.content;
             let lines: string[] = content.split(/\n/);
             new Promise((resolve,reject) => {
                 lines.forEach(async line => {
                     // Si la línea tiene una declaración de variable
-                    if (/def (.*?) ?= ?\"\D(.*?)\";/g.test(line)) {
-                        let variable_content:string = line.split(/def (.*?) ?= ?\"/).pop().split(/\"/)[0];
-                        let variable_name:string = line.split(/def /).pop().split(/ ?=/)[0];
-                        let variable = new Variable({
+                    if (find.variable(line)) {
+                        //let variable_content:string = line.split(/def (.*?) ?= ?\"/).pop().split(/\"/)[0];
+                        //let variable_name:string = line.split(/def /).pop().split(/ ?=/)[0];
+                        /*let variable = new Variable({
                             type: "string",
                             name: variable_name,
                             value: variable_content
+                        })*/
+                        let variable = new Variable({
+                            var: line.match(/def (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/)[0],
+                            filename: this.filename
                         })
-                        await this.run(variable.name, variable.value);
+                        if (variable.checkType())
+                            await this.run(variable.variable_name, variable.value);
                     }
                 })
                 resolve(this.structure);

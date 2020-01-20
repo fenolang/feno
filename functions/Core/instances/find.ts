@@ -32,3 +32,10 @@ export function component(code: string): boolean {
     else
         return false 
 }
+
+export function variable(code: string): boolean {
+    if (/def (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/.test(code)) 
+        return true
+    else
+        return false
+}
