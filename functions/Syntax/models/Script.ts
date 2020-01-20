@@ -90,7 +90,7 @@ export default class Script {
                         filename: this.req.filename
                     })
                     /** Check if types are correct in var */
-                    if (variable.checkType()) {
+                    if (variable.checkType() && variable.checkAssignmentTypes(this.req.code)) {
                         // Transpile variable to JS
                         this.req.code = variable.transpile(this.req.code);
                     }
