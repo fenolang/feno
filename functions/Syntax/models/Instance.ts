@@ -76,28 +76,33 @@ export default class Instance {
             }
         })
     }
+
+    private applyVariables(variable: string): void {
+        // Set slots
+        let regex = new RegExp(`{{ ?${variable} ?}}`,'g')
+        this.structure = this.structure.replace(regex, `<slot name="${variable}"></slot>`)
+        let apply_code = `document.querySelector('[name="${variable}"]').innerHTML = ${variable};`
+
+        // Set apply code
+        this.structure = this.structure.replace(/new Feno ?\({([\s\S]*?)}\)/, `new Feno({$1\t${apply_code}\n})`);
+    }
     
     public strings(): void {
-        if (/*/def (.*?) ?= ?\"\D(.*?)\"/g.test(this.structure)*/find.variable(this.structure)) {
+        if (find.variable(this.structure)) {
             let content: string = this.content;
             let lines: string[] = content.split(/\n/);
             new Promise((resolve,reject) => {
                 lines.forEach(async line => {
                     // Si la línea tiene una declaración de variable
                     if (find.variable(line)) {
-                        //let variable_content:string = line.split(/def (.*?) ?= ?\"/).pop().split(/\"/)[0];
-                        //let variable_name:string = line.split(/def /).pop().split(/ ?=/)[0];
-                        /*let variable = new Variable({
-                            type: "string",
-                            name: variable_name,
-                            value: variable_content
-                        })*/
                         let variable = new Variable({
                             var: line.match(/def (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/)[0],
                             filename: this.filename
                         })
-                        if (variable.checkType())
-                            await this.run(variable.variable_name, variable.value);
+                        if (variable.checkType() && variable.checkAssignmentTypes(this.content)) {
+                            this.structure = variable.transpile(this.structure);
+                            this.applyVariables(variable.variable_name);
+                        }
                     }
                 })
                 resolve(this.structure);
@@ -106,7 +111,8 @@ export default class Instance {
     }
     
     public destroy(): void {
-        this.structure = this.structure.split(/new Feno ?\({[\s\S]*}\)/).join('');
+        // this.structure = this.structure.split(/new Feno ?\({[\s\S]*}\)/).join('');
+        this.structure = this.structure.replace(/new Feno ?\({([\s\S]*?)}\)/, `<script>$1</script>`);
     }
 
     public getContent(): string {

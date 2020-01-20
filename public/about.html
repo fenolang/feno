@@ -1,5 +1,10 @@
 <body>
     <p>Acerca de</p>
-    <a href="index.html">bienvenido</a>
+    <a href="index.html"><slot name="hola"></slot></a>
 </body>
 
+<script>
+    let hola = "bienvenido";
+    hola = "Hola Mundo"
+	document.querySelector('[name="hola"]').innerHTML = hola;
+</script>

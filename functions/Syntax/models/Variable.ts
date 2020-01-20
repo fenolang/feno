@@ -62,16 +62,16 @@ export default class Variable {
         let regex: RegExp;
 
         if (this.type == 'String') {
-            regex = new RegExp(`${this.variable_name} ?= ?${this.Number}|${this.Boolean}|${this.Object}|${this.Array}`, 'gm');
+            regex = new RegExp(`${this.variable_name} ?= ?(${this.Number}|${this.Boolean}|${this.Object}|${this.Array})`, 'gm');
         }
         else if (this.type == 'Number')
-            regex = new RegExp(`${this.variable_name} ?= ?${this.String}|${this.Boolean}|${this.Object}|${this.Array}`, 'gm');
+            regex = new RegExp(`${this.variable_name} ?= ?(${this.String}|${this.Boolean}|${this.Object}|${this.Array})`, 'gm');
         else if (this.type == 'Boolean')
-            regex = new RegExp(`${this.variable_name} ?= ?${this.String}|${this.Number}|${this.Object}|${this.Array}`, 'gm');
+            regex = new RegExp(`${this.variable_name} ?= ?(${this.String}|${this.Number}|${this.Object}|${this.Array})`, 'gm');
         else if (this.type == 'Object')
-            regex = new RegExp(`${this.variable_name} ?= ?${this.Number}|${this.Number}|${this.String}|${this.Array}`, 'gm');
+            regex = new RegExp(`${this.variable_name} ?= ?(${this.Number}|${this.Number}|${this.String}|${this.Array})`, 'gm');
         else if (this.type == 'Array')
-            regex = new RegExp(`${this.variable_name} ?= ?${this.Number}|${this.Boolean}|${this.Object}|${this.String}`, 'gm');
+            regex = new RegExp(`${this.variable_name} ?= ?(${this.Number}|${this.Boolean}|${this.Object}|${this.String})`, 'gm');
 
         if (regex.test(code))
             this.returnAssignmentError(this.type);
