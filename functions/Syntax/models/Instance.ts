@@ -2,6 +2,7 @@ import Variable from './Variable';
 import Error from './Error';
 import * as find from '@instances/find';
 import * as layouts from '@feno/layouts';
+import * as utils from '../utils';
 
 interface InstanceBody {
     structure: string,
@@ -21,16 +22,7 @@ export default class Instance {
         this.structure = body.structure;
         this.filename = body.filename;
         this.getInstance(body.structure)
-    }
-    
-    private async run(name:string, value:string):Promise<boolean> {
-        return new Promise((resolve,reject) => {
-            // Remove string characters. ej: ""
-            value = value.replace(/"|'|`/g,'');
-            this.structure = this.structure.split(`{{${name}}}`).join(value);
-            this.structure = this.structure.split(`{{ ${name} }}`).join(value);
-            resolve(true);
-        })
+        this.structure = utils.basicFunctions(this.structure);
     }
     
     public getInstance(code: string): void {

@@ -1,6 +1,7 @@
 import fse from 'fs-extra';
 import path from 'path';
 import * as find from '@instances/find';
+import * as utils from '../utils';
 import Variable from './Variable';
 import { getPublic } from '@config/env';
 const base = process.cwd();
@@ -78,6 +79,7 @@ export default class Script {
 
     private async process() {
         await this.variables();
+        this.req.code = utils.basicFunctions(this.req.code);
     }
 
     private async variables() {
