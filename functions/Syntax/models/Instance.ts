@@ -1,4 +1,6 @@
+import { Configuration } from '@core/main-process';
 import Variable from './Variable';
+import Constant from './Constant';
 import Error from './Error';
 import * as find from '@instances/find';
 import * as layouts from '@feno/layouts';
@@ -40,7 +42,7 @@ export default class Instance {
         }
     }
 
-    public async layouts() {
+    public async layouts(config: Configuration) {
         return new Promise(async (resolve, reject) => {
             // If the instance has a layout declared
             if (/this\.layout ?= ?"(.*?)",?/.test(this.content)) {
@@ -52,7 +54,7 @@ export default class Instance {
                         layout: layout_name,
                         filename: this.filename
                     })
-                    await layouts_instance.getResponse()
+                    await layouts_instance.getResponse(config)
                     this.structure = layouts_instance.res;
                     resolve();
                 } else {
@@ -81,8 +83,7 @@ export default class Instance {
     
     public strings(): void {
         if (find.variable(this.structure)) {
-            let content: string = this.content;
-            let lines: string[] = content.split(/\n/);
+            let lines: string[] = this.content.split(/\n/);
             new Promise((resolve,reject) => {
                 lines.forEach(async line => {
                     // Si la línea tiene una declaración de variable
@@ -94,6 +95,27 @@ export default class Instance {
                         if (variable.checkType() && variable.checkAssignmentTypes(this.content)) {
                             this.structure = variable.transpile(this.structure);
                             this.applyVariables(variable.variable_name);
+                        }
+                    }
+                })
+                resolve(this.structure);
+            })
+        }
+    }
+
+    public constants(): void {
+        if (find.constant(this.structure)) {
+            let lines: string[] = this.content.split(/\n/);
+            new Promise((resolve, reject) => {
+                lines.forEach(async line => {
+                    if (find.constant(line)) {
+                        let constant = new Constant({
+                            var: line.match(/const (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/)[0],
+                            filename: this.filename
+                        })
+                        if (constant.checkType() && constant.checkNoAssignaments(this.content)) {
+                            this.structure = constant.transpile(this.structure);
+                            this.applyVariables(constant.variable_name);
                         }
                     }
                 })

@@ -1,12 +1,14 @@
-export function find_doc(doc:string):string { /** Encontrar el documento */
-   doc = doc.match(/doc: {([\s\S]*)}/)[1];
-   return doc;
-}
-
 export function close_doc(doc:string):string { /** Encapsular contenido del documento en body tags */
    let doc_content = doc.match(/doc: {([\s\S]*)}/)[1];;
    doc = doc.split(`doc: {${doc_content}}`).join(`<body>${doc_content}</body>`);
    doc = doc.split(`doc:{${doc_content}}`).join(`<body>${doc_content}</body>`);
+   return doc;
+}
+
+export function formatDocument(doc: string, type: string): string {
+   doc = doc.replace(/doc: ?{([\s\S]*?)}/, '<body>$1</body>');
+   if (type != 'component')
+      doc = `<!DOCTYPE html>\n<html lang="en">\n${doc}\n</html>`;
    return doc;
 }
 
@@ -19,14 +21,5 @@ export function jscompile(html:string):string { /** Interpretación: { Nue } -->
    html = html.replace(/create/g,'createElement');
    html = html.replace(/storage/g,'localStorage');
 
-   return html;
-}
-
-export function deleteLinks(html:string):string { /** Eliminado de links escritos en Nue */
-   if (html.indexOf('links(') != -1) {
-       let links_content:string = html.split('links(').pop().split(/\)/)[0];
-       let links_tag:string = `links(${links_content})`;
-       html = html.split(links_tag).join('');
-   }
    return html;
 }

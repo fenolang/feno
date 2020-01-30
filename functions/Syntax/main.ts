@@ -1,22 +1,24 @@
+import { Request } from '@core/main-process';
 import Instance from './models/Instance';
 import Error from './models/Error';
 
-export async function searchInstance(code: string, filename: string): Promise<string> {
+export async function searchInstance(req: Request): Promise<string> {
     return new Promise((resolve,reject) => {
-        if (/\bnew Feno ?\({([\s\S]*?)}\)/g.test(code)) {
-            let res = $run(code, filename);
+        if (/\bnew Feno ?\({([\s\S]*?)}\)/g.test(req.code)) {
+            let res = $run(req);
             resolve(res);
         } else {
-            resolve(code);
+            resolve(req.code);
         }
     })
 }
 
-export async function $run(code: string, filename: string):Promise<string> {
-    let el = new Instance({structure: code, inline: false, filename: filename});
+export async function $run(req: Request):Promise<string> {
+    let el = new Instance({structure: req.code, inline: false, filename: req.filename});
     return new Promise(async (resolve,reject) => {
-        await el.layouts();
         el.strings();
+        el.constants();
+        await el.layouts(req.config);
         el.destroy();
         resolve(el.getContent());    
     })

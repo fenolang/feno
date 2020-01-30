@@ -4,20 +4,35 @@ import * as styles from '@feno/styles';
 import * as scripts from '@feno/scripts';
 import * as interpretation from '@feno/interpretation';
 
-export async function Process(code:string, type:string, filename:string) {
+export interface Configuration {
+    stylesDir: string,
+    scriptsDir: string,
+    outDir: string,
+    noscript: string
+}
+
+export interface Request {
+    code: string,
+    type: string,
+    filename: string,
+    config: Configuration
+}
+
+export async function Process(req: Request) {
     /** Run scripts transpilation */
     let script = new Script();
-    script.start();
+    script.start(req.config);
 
-    code = await searchInstance(code, filename); // Search FENO class
+    req.code = await searchInstance(req); // Search FENO class
 
     /** Search for external sources */
-    code = await styles.$watch(code, filename);
-    code = await scripts.$watch(code, filename);
-    code = await scripts.checkNoScript(code, filename);
+    req.code = await styles.$watch(req.code, req.filename);
+    req.code = await scripts.$watch(req.code, req.filename);
+    req.code = await scripts.checkNoScript(req.code, req.filename);
 
     /** Transpile */
-    code = await interpretation.compile(code,type,filename);
-    
-    return code;
+    //req.code = await interpretation.compile(req.code, req.type, req.filename);
+    req.code = await interpretation.compile(req);
+
+    return req.code;
 }

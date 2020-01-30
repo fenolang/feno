@@ -39,3 +39,10 @@ export function variable(code: string): boolean {
     else
         return false
 }
+
+export function constant(code: string): boolean {
+    if (/const (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/.test(code))
+        return true
+    else
+        return false
+}

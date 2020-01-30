@@ -1,6 +1,7 @@
 import * as Core from '@core/main-process';
 import * as find from '@instances/find';
 import { getPublic } from '@config/env';
+import { Configuration } from '@core/main-process';
 import path from 'path';
 import fse from 'fs-extra';
 const base = process.cwd();
@@ -12,7 +13,7 @@ export function analyzeProps(code: string): string {
 
 class Component {
     super_variables: string = "";
-    attributes: string = "return [";
+    public attributes: string = "return [";
     name: string = "";
     query_selectors: string = "";
     get_and_sets: string = "";
@@ -97,7 +98,7 @@ set ${variable} (val) {
     }
 }
 
-export async function transpile() {
+export async function transpile(config: Configuration) {
     /** Read all files in components folder */
     fse.readdir(`${base}/src/components/`, async (err: string, files: string[]) => {
         if (err) return console.error(err);
@@ -115,20 +116,28 @@ export async function transpile() {
                             let component_name = data.match(/'(.*?)'(?=, ?{)/);
                             let component_content = data.replace(/declare Component ?\('(.*?)', ?{([\s\S]*?)}\)/,'doc: {$2}');
                             /** Transpile component */
-                            let transpiled_content = await Core.Process(component_content, 'script', basename);
+                            let transpiled_content = await Core.Process({
+                                code: component_content,
+                                type: 'component',
+                                filename: basename,
+                                config: config
+                            });
                             /** Define content inside a template */
                             transpiled_content = transpiled_content.replace(/<body>([\s\S]*?)<\/body>/g,'<template id="doc">$1<template>')
                             let component = new Component(component_name[0]);
-                            /** Transpile called props */
-                            let props_array = transpiled_content.match(/{{ ?props\.(.*?) ?}}/g)
-                            /** Detect props and transpile to JavaScript */
-                            props_array.forEach(prop_call => {
-                                prop_call = prop_call.split(/{{ ?props\./).join('');
-                                prop_call = prop_call.split(/ ?}}/).join('');
-                                component.addVariable(prop_call);
-                            })
-                            component.closeAttributes();
-                            transpiled_content = analyzeProps(transpiled_content);
+                            if (/{{ ?props\.(.*?) ?}}/.test(transpiled_content)) {
+                                /** Transpile called props */
+                                let props_array = transpiled_content.match(/{{ ?props\.(.*?) ?}}/g)
+                                /** Detect props and transpile to JavaScript */
+                                props_array.forEach(prop_call => {
+                                    prop_call = prop_call.split(/{{ ?props\./).join('');
+                                    prop_call = prop_call.split(/ ?}}/).join('');
+                                    component.addVariable(prop_call);
+                                })    
+                                component.closeAttributes();
+                                transpiled_content = analyzeProps(transpiled_content);
+                            } else 
+                                component.attributes = "";
                             component.addContent(transpiled_content);
                             components_declaration = `${components_declaration}\n\n${component.formatCode()}`;
                             // If we are in the last file of the folder

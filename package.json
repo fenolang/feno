@@ -1,12 +1,14 @@
 {
   "name": "feno",
-  "version": "0.7.0",
-  "description": "The programming language for great web development.",
+  "version": "0.9.0",
+  "description": "The JavaScript for great web development.",
   "main": "index.ts",
   "scripts": {
     "resolve": "tspath -f",
     "build": "tsc",
-    "dev": "cross-env FENO_ENV=local nodemon --watch src"
+    "dev": "cross-env FENO_ENV=local nodemon --watch src",
+    "feno": "ts-node ./config/init.ts",
+    "generate": "ts-node ./config/init.ts generate"
   },
   "repository": {
     "type": "git",

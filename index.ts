@@ -1,16 +1,63 @@
 import 'module-alias/register'
 import clear from '@config/clear';
-import * as listen from '@core/server';
+import fse from 'fs-extra';
 
-//Modulos
+//Modules
+import Error from '@syntax/models/Error';
 import * as Watcher from '@core/watcher';
+import * as listen from '@core/server';
+import * as find from '@instances/find';
+
+//Interfaces
+import { Configuration } from '@core/main-process';
+
+const base = process.cwd();
 
 clear();
 
 async function main() {
     return new Promise(async (resolve, reject) => {
-        await Watcher.watch();
-        resolve();
+        fse.pathExists(`${base}/feconfig.feno`, (err: string, exists: boolean) => {
+            if (err) return console.error(err);
+            if (exists) {
+                fse.readFile(`${base}/feconfig.feno`, 'utf8', async (err: string, data: string) => {
+                    let config: Configuration = {
+                        outDir: "",
+                        stylesDir: "",
+                        scriptsDir: "",
+                        noscript: ""
+                    }
+
+                    if (/outDir: ?["|'|`](.*?)["|'|`],?/.test(data) && data.match(/outDir: ?["|'|`](.*?)["|'|`],?/)[1] != "")
+                        config.outDir = data.match(/outDir: ?["|'|`](.*?)["|'|`],?/)[1]
+                    else
+                        config.outDir = "dist/"
+                    if (/stylesDir: ?["|'|`](.*?)["|'|`],?/.test(data) && data.match(/stylesDir: ?["|'|`](.*?)["|'|`],?/)[1] != "")
+                        config.stylesDir = data.match(/stylesDir: ?["|'|`](.*?)["|'|`],?/)[1]
+                    else
+                        config.stylesDir = "styles/"
+                    if (/scriptsDir: ?["|'|`](.*?)["|'|`],?/.test(data) && data.match(/scriptsDir: ?["|'|`](.*?)["|'|`],?/)[1] != "")
+                        config.scriptsDir = data.match(/scriptsDir: ?["|'|`](.*?)["|'|`],?/)[1]
+                    else
+                        config.scriptsDir = "scripts/"
+                    if (/noScript: ?["|'|`](.*?)["|'|`],?/.test(data) && data.match(/noScript: ?["|'|`](.*?)["|'|`],?/)[1] != "")
+                        config.noscript = data.match(/noScript: ?["|'|`](.*?)["|'|`],?/)[1]
+                    else
+                        config.noscript = ""
+
+                    await Watcher.watch(config);
+                    resolve();
+                })
+            } else {
+                new Error({
+                    text: "Feno configuration file was not found!",
+                    at: "feconfig.feno",
+                    solution: "Create a configuration file for Feno.",
+                    info: "http://fenolang.org/docs/config-file"
+                })
+                resolve();
+            }
+        })
     })
 }
 
@@ -23,8 +70,8 @@ async function server() {
 
 module.exports = {
     run: () => {
-        server();
         main();
+        server();
     }
 }
 

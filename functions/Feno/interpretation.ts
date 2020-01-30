@@ -4,35 +4,25 @@ import * as images from './images';
 import * as styles from './styles';
 import * as head from '@syntax/head';
 import * as attributes from './attributes';
+import { Request } from '@core/main-process';
 
-export async function compile(code:string,type:string,name:string) {
-    let html: string = code;
+export async function compile(req: Request) {
+    let html: string = req.code;
     await new Promise(async (resolve, reject) => {
-        //html = await functions.deleteLinks(html);
-
-        html = await images.$watch(html, name);
-
-        //html = await functions.attributes(html); HTML DEPRECATED
-
-        //html = await functions.tags(html); HTML DEPRECATED
+        html = await images.$watch(html, req.filename);
 
         html = attributes.transpile(html);
 
         html = await functions.jscompile(html);
 
-        //html = await functions.fixTags(html);
-
         // Head instance
-        html = await head.$watch(html, name);
+        html = await head.$watch(html, req.filename);
 
         // Styles instance
-        html = await styles.checkInstance(html, name);
+        html = await styles.checkInstance(html, req.filename);
 
-        if (type == 'script') {
-            html = functions.close_doc(html);
-        } /*else {
-            html = component_functions.close_doc(html);
-        }*/
+        html = functions.formatDocument(html, req.type)
+
         resolve();
     })
     return html;

@@ -1,3 +1,4 @@
+import { Configuration } from '@core/main-process';
 import fse from 'fs-extra';
 import Error from '@syntax/models/Error';
 import * as Core from '@core/main-process';
@@ -18,11 +19,11 @@ export class Transpilation {
         this.req = req;
     }
 
-    async getResponse() {
-        await this.transpile()
+    async getResponse(config: Configuration) {
+        await this.transpile(config)
     }
 
-    transpile() {
+    transpile(config: Configuration) {
         /** Check if layout exists */
         return new Promise((resolve, reject) => {
             fse.pathExists(`${base}/src/layouts/${this.req.layout}.feno`, (err: string, exists: boolean) => {
@@ -35,7 +36,13 @@ export class Transpilation {
                         if (find.doc(data)) {
                             if (/appView\(\)/g.test(data)) {
                                 // Transpile layout content
-                                data = await Core.Process(data, 'script', this.req.filename);
+                                //data = await Core.Process(data, 'script', this.req.filename);
+                                data = await Core.Process({
+                                    code: data,
+                                    type: 'script',
+                                    filename: this.req.filename,
+                                    config: config
+                                })
                                 data = data.split('<body>').pop().split('</body>')[0];
                                 // Set layout to page
                                 let page_content: string = this.req.code.match(/doc: ?{([\s\S]*?)}/)[1];

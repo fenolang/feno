@@ -1,4 +1,5 @@
 import { getPublic } from '@config/env';
+import { Configuration } from '@core/main-process';
 import * as find from '@core/instances/find';
 import * as Core from '@core/main-process';
 import * as Components from '@feno/components';
@@ -7,20 +8,20 @@ import fse from 'fs-extra';
 import path from 'path';
 const base = process.cwd();
 
-export async function watch () {
+export async function watch (config: Configuration) {
     return new Promise(async (resolve, reject) => {
-        $watchDeletedStyles();
-        $watchDeletedScripts();
-        $watchStyles();
-        await Components.transpile();
-        await $watchChanges();
+        $watchDeletedStyles(config);
+        $watchDeletedScripts(config);
+        $watchStyles(config);
+        await Components.transpile(config);
+        await $watchChanges(config);
         resolve();
         console.log("");
         console.log(`< \u{1F33B}  Compiled Successfully!    `);    
     })
 }
 
-function $watchChanges() {
+function $watchChanges(config: Configuration) {
     return new Promise(async (resolve, reject) => {
         fse.readdir(`${base}/src/pages`, (err: string, files: string[]) => {
             if (files && files.length) {
@@ -31,7 +32,13 @@ function $watchChanges() {
                             let basename: string = path.basename(file, path.extname(file));
                             if (find.doc(data)) {
                                 let content: string = "";
-                                content = await Core.Process(data, 'script', basename);
+                                //content = await Core.Process(data, 'script', basename);
+                                content = await Core.Process({
+                                    code: data,
+                                    type: 'script',
+                                    filename: basename,
+                                    config: config
+                                })
                                 fse.writeFile(path.join(getPublic(), `${basename}.html`), content, (err: string) => {
                                     if (err) throw err;
                                     resolve();
@@ -60,7 +67,7 @@ function $watchChanges() {
     })
 }
 
-function $watchDeletedScripts() {
+function $watchDeletedScripts(config: Configuration) {
     fse.readdir(getPublic(), (err: string, files: string[]): boolean => {
         files.forEach(file => {
             if (file != 'css') {
@@ -85,14 +92,14 @@ function $watchDeletedScripts() {
     });
 }
 
-function $watchStyles() {
-    fse.readdir(`${base}/src/styles`, (err: string, files: string[]): boolean => {
+function $watchStyles(config: Configuration) {
+    fse.readdir(`${base}/src/${config.stylesDir}`, (err: string, files: string[]): boolean => {
         if (err) console.error(err);
         if (files && files.length) {
             files.forEach(file => {
                 let ext: string = path.extname(file);
                 if (ext == '.css') {
-                    fse.copyFile(`${base}/src/styles/${file}`,
+                    fse.copyFile(`${base}/src/${config.stylesDir}${file}`,
                         /*`./public/css/${file}`,*/
                         /*path.join(path.dirname(require.resolve('graphtml')),`/public/${file}`),*/
                         path.join(getPublic(), `/css/${file}`),
@@ -106,14 +113,14 @@ function $watchStyles() {
     });
 }
 
-function $watchDeletedStyles() {
+function $watchDeletedStyles(config: Configuration) {
     fse.readdir(path.join(getPublic(),'/css'), (err: string, files: string[]): boolean => {
         if (err) console.error(err);
         if (files && files.length) {
             files.forEach(file => {
                 let ext: string = path.extname(file);
                 if (ext == '.css') {
-                    fse.pathExists(`${base}/src/styles/${file}`, (err: string, exists: boolean) => {
+                    fse.pathExists(`${base}/src/${config.stylesDir}${file}`, (err: string, exists: boolean) => {
                         if (err) console.error(err);
                         if (!exists) {
                             fse.remove(path.join(getPublic(), `/${file}`), (err: string) => {
