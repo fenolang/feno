@@ -6,7 +6,6 @@ import fse from 'fs-extra';
 import Error from '@syntax/models/Error';
 import * as Watcher from '@core/watcher';
 import * as listen from '@core/server';
-import * as find from '@instances/find';
 
 //Interfaces
 import { Configuration } from '@core/main-process';
@@ -15,12 +14,13 @@ const base = process.cwd();
 
 clear();
 
-async function main() {
+export async function main() {
     return new Promise(async (resolve, reject) => {
         fse.pathExists(`${base}/feconfig.feno`, (err: string, exists: boolean) => {
             if (err) return console.error(err);
             if (exists) {
                 fse.readFile(`${base}/feconfig.feno`, 'utf8', async (err: string, data: string) => {
+                    if (err) return console.error(err);
                     let config: Configuration = {
                         outDir: "",
                         stylesDir: "",
@@ -68,16 +68,14 @@ async function server() {
     })
 }
 
-module.exports = {
-    run: () => {
-        main();
-        server();
+/*module.exports = {
+    run: async () => {
+        await main();
+        await server();
     }
-}
+}*/
 
 export async function run() {
     await main();
     await server();
 }
-
-run();
