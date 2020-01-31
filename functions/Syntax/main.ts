@@ -19,8 +19,9 @@ export async function $run(req: Request):Promise<string> {
         el.strings();
         el.constants();
         await el.layouts(req.config);
+        await el.crystals()
         el.destroy();
-        resolve(el.getContent());    
+        resolve(el.getContent());
     })
     //Deprecated code:
     //let struct = await el.strings(code);

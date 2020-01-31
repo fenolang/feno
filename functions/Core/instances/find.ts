@@ -46,3 +46,10 @@ export function constant(code: string): boolean {
     else
         return false
 }
+
+export function crystal(code: string): boolean {
+    if (/declare Crystal .*?:[\s\S]*?}/.test(code))
+        return true
+    else
+        return false
+}

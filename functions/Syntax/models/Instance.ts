@@ -1,6 +1,8 @@
 import { Configuration } from '@core/main-process';
+const beautify = require('js-beautify').html;
 import Variable from './Variable';
 import Constant from './Constant';
+import Crystal from './Crystal';
 import Error from './Error';
 import * as find from '@instances/find';
 import * as layouts from '@feno/layouts';
@@ -123,6 +125,23 @@ export default class Instance {
             })
         }
     }
+
+    public async crystals() {
+        return new Promise((resolve, reject) => {
+            if (find.crystal(this.structure)) {
+                let crystal_matches = this.structure.match(/declare Crystal .*?:[\s\S]*?}/g);
+                crystal_matches.forEach(async crystal_match => {
+                    let crystal = new Crystal(crystal_match, this.filename);
+                    await crystal.transpile(this.structure);
+                    this.structure = crystal.result;
+                    this.structure = utils.basicFunctions(this.structure);
+                })
+                resolve();
+            } else {
+                resolve();
+            }
+        })
+    }
     
     public destroy(): void {
         // this.structure = this.structure.split(/new Feno ?\({[\s\S]*}\)/).join('');
@@ -130,6 +149,7 @@ export default class Instance {
     }
 
     public getContent(): string {
+        this.structure = beautify(this.structure);
         return this.structure;
     }
     

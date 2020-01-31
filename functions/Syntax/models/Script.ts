@@ -1,11 +1,13 @@
 import { getPublic } from '@config/env';
 import { Configuration } from '@core/main-process';
 import * as find from '@instances/find';
+import beautify from 'js-beautify';
 import fse from 'fs-extra';
 import path from 'path';
 import * as utils from '../utils';
 import Variable from './Variable';
 import Constant from './Constant';
+import Crystal from './Crystal';
 const base = process.cwd();
 
 interface Request {
@@ -88,9 +90,11 @@ export default class Script {
 
     private async process() {
         return new Promise(async (resolve, reject) => {
+            await this.crystals();
             await this.variables();
             await this.constants();
             this.req.code = utils.basicFunctions(this.req.code);
+            this.req.code = beautify(this.req.code);
             resolve()
         })
     }
@@ -131,6 +135,22 @@ export default class Script {
                 }
             })
             resolve();
+        })
+    }
+
+    private async crystals() {
+        return new Promise((resolve, reject) => {
+            if (/declare Crystal .*?:[\s\S]*?}/.test(this.req.code)) {
+                let crystal_matches = this.req.code.match(/declare Crystal .*?:[\s\S]*?}/g);
+                crystal_matches.forEach(async crystal_match => {
+                    let crystal = new Crystal(crystal_match, this.req.filename);
+                    await crystal.transpile(this.req.code);
+                    this.req.code = crystal.result;
+                })
+                resolve();
+            } else {
+                resolve();    
+            }
         })
     }
 }
