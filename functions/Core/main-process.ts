@@ -1,3 +1,4 @@
+const beautify = require('js-beautify').html;
 import { searchInstance, $run } from '@syntax/main';
 import Script from '@syntax/models/Script';
 import * as styles from '@feno/styles';
@@ -28,11 +29,13 @@ export async function Process(req: Request) {
     /** Search for external sources */
     req.code = await styles.$watch(req.code, req.filename);
     req.code = await scripts.$watch(req.code, req.filename);
-    req.code = await scripts.checkNoScript(req.code, req.filename);
+    req.code = await scripts.checkNoScript(req);
 
     /** Transpile */
     //req.code = await interpretation.compile(req.code, req.type, req.filename);
     req.code = await interpretation.compile(req);
+
+    req.code = beautify(req.code);
 
     return req.code;
 }

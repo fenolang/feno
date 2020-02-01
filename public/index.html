@@ -1,42 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<script src="/scripts/test.js"></script><script src="./scripts/components.js"></script>
+    <script src="/scripts/test.js"></script>
+    <noscript>
+        <p>Necesito JS!</p>
+    </noscript>
+    <script src="./scripts/components.js"></script>
 </head>
 
 <body>
-<p>Hola Mundo</p>
+    <p>Hola Mundo</p>
 </body>
 
-<script>
-    function first(crystal, opc) {
-        //Crystal: 'res'
-        if (crystal == 'res') {
-            switch (opc) {
-                case 0:
-                    console.log("- Bienvenido a mi mundo")
-                    break;
-                case 1:
-                    console.log("- Bienvenido")
-                    break;
-
-            }
-        }
-        console.log("Y el personaje dice lo siguiente:")
-        //Crystal: 'req'
-        if (crystal == 'req') {
-            switch (opc) {
-                case 0:
-                    alert("- Bienvenido a mi tierra")
-                    break;
-
-            }
-        }
-    }
-
-    first("res", 0)
-    first("res", 1)
-
-    first("req", 0)
-</script>
 </html>

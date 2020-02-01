@@ -1,5 +1,6 @@
 import Error from '@syntax/models/Error';
 import * as find from '@instances/find';
+import { Request } from '@core/main-process';
 
 function scriptsError(filename): void {
     new Error({
@@ -10,20 +11,28 @@ function scriptsError(filename): void {
     })
 }
 
-export function checkNoScript(code: string, filename: string): string {
-    if (find.noscript(code)) {
-        if (find.head(code)) {
-            code = code.replace(/noscript: ?{([\s\S]*?)}/,'<noscript>$1</noscript>');
+export function checkNoScript(req: Request): string {
+    if (find.noscript(req.code)) {
+        if (find.head(req.code)) {
+            req.code = req.code.replace(/noscript: ?{([\s\S]*?)}/,'<noscript>$1</noscript>');
         } else {
             new Error({
                 text: "Head instance was not found!",
-                at: `${filename}.feno`,
+                at: `${req.filename}.feno`,
                 solution: "You should declare a Head instance before declaring the NoScript instance",
                 info: "http://fenolang.org/docs/noscript"
             })
         }
+    } else {
+        if (find.head(req.code)) {
+            /** If a noscript is defined in configuration */
+            console.log(req.config)
+            if (req.config.noscript && req.config.noscript.length && req.config.noscript != "") {
+                req.code = req.code.replace(/head: ?{([\s\S]*?)}/, `head: {$1<noscript>${req.config.noscript}</noscript>\n}`);
+            }
+        }
     }
-    return code;
+    return req.code;
 }
 
 export function $watch(code: string, filename: string): string {

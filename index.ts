@@ -40,8 +40,8 @@ export async function main() {
                         config.scriptsDir = data.match(/scriptsDir: ?["|'|`](.*?)["|'|`],?/)[1]
                     else
                         config.scriptsDir = "scripts/"
-                    if (/noScript: ?["|'|`](.*?)["|'|`],?/.test(data) && data.match(/noScript: ?["|'|`](.*?)["|'|`],?/)[1] != "")
-                        config.noscript = data.match(/noScript: ?["|'|`](.*?)["|'|`],?/)[1]
+                    if (/noScript: ?{[\s\S]*?},?/.test(data) && data.match(/noScript: ?{([\s\S]*?)},?/)[1] != "")
+                        config.noscript = data.match(/noScript: ?{([\s\S]*?)},?/)[1]
                     else
                         config.noscript = ""
 

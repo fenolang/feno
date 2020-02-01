@@ -2,4 +2,7 @@
 	outDir: "",
 	scriptsDir: "",
 	stylesDir: ""
+	noScript: {
+		<p>Necesito JS!</p>
+	}
 }
