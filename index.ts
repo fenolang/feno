@@ -79,5 +79,3 @@ export async function run() {
     await main();
     await server();
 }
-
-run()
