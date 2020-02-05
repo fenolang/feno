@@ -2,6 +2,17 @@
 
 All versions here are available on NPM. Future versions are not included here until they are releashed.
 
+## [1.0.0] (2020-02-04)
+
+## New
+- Export projects for production!
+- Cubes!
+
+## Changes
+
+## Fix
+- The NoScript defined in config is applied correctly
+
 ## [0.9.0-beta] (2020-01-30)
 
 ### New
