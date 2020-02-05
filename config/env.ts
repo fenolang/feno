@@ -17,7 +17,7 @@ function detectEnv(): void {
 export function getPublic() {
     detectEnv();
     if (env == "dev") {
-        public_dist = path.join(require.resolve('feno'), '/public/');
+        public_dist = path.join(path.dirname(require.resolve('feno')), '/public/');
         return public_dist;
     } else
         return public_dev;
