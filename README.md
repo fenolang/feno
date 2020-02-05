@@ -41,7 +41,7 @@ Soon we will open a place on our site so you can freely report errors
 
 ## Changelog
 
-You can check the changelog in [our site](http://fenolang.heroku.com) or here [in github](https://github.com/fenolang/feno/CHANGELOG.md)
+You can check the changelog in [our site](http://fenolang.heroku.com) or here [in github](https://github.com/fenolang/feno/blob/master/CHANGELOG.md)
 
 ## Stay in touch
 
