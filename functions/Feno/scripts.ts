@@ -7,7 +7,7 @@ function scriptsError(filename): void {
         text: "import() expects at least 1 parameter but got 0!",
         at: `${filename}.feno`,
         solution: "You need to call at least one script within the import() function",
-        info: "http://fenolang.org/docs/meta_elements#import"
+        info: "https://fenolang.herokuapp.com/docs/meta_elements#import"
     })
 }
 
@@ -20,7 +20,7 @@ export function checkNoScript(req: Request): string {
                 text: "Head instance was not found!",
                 at: `${req.filename}.feno`,
                 solution: "You should declare a Head instance before declaring the NoScript instance",
-                info: "http://fenolang.org/docs/noscript"
+                info: "https://fenolang.herokuapp.com/docs/noscript"
             })
         }
     } else {

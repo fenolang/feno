@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="http://fenolang.heroku.com" target="_blank">
+    <a href="https://fenolang.herokuapp.com" target="_blank">
         <img src="./logo.png" width="100">
     </a>
 </p>
@@ -33,7 +33,7 @@ Feno supports all browsers that are [ES5-compliant](http://kangax.github.io/comp
 
 ## Documentation
 
-You can learn all about Feno in our official documentation in: [Fenolang Website](http://fenolang.heroku.com)
+You can learn all about Feno in our official documentation in: [Fenolang Website](https://fenolang.herokuapp.com)
 
 ## Issues
 
@@ -41,7 +41,7 @@ Soon we will open a place on our site so you can freely report errors
 
 ## Changelog
 
-You can check the changelog in [our site](http://fenolang.heroku.com) or here [in github](https://github.com/fenolang/feno/blob/master/CHANGELOG.md)
+You can check the changelog in [our site](https://fenolang.herokuapp.com) or here [in github](https://github.com/fenolang/feno/blob/master/CHANGELOG.md)
 
 ## Stay in touch
 

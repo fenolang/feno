@@ -6,7 +6,7 @@ export function $watch(code:string, filename: string):string {
             text: "image() function expects 1 parameter but got 0!",
             at: `${filename}.feno`,
             solution: "Pass the path of the image that you want as a parameter on image() function",
-            info: "http://fenolang.org/docs/img"
+            info: "https://fenolang.herokuapp.com/docs/img"
         })
     } else {
         code = code.replace(/\bimage\("(.*?)\b"\)(.\((.*?)\))?/g, '<img src="/images/$1" $3>');

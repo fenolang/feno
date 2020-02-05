@@ -42,7 +42,7 @@ export async function $watch(feno_code:string, filename:string) {
                     text: "The Meta property need at least 1 element but got 0!",
                     at: `${filename}.feno`,
                     solution: "Declare at least one element inside Meta[] property.",
-                    info: "http://fenolang.org/docs/meta_elements#structure"
+                    info: "https://fenolang.herokuapp.com/docs/meta_elements#structure"
                 })
             }
         } else {
@@ -76,7 +76,7 @@ export async function $watch(feno_code:string, filename:string) {
                                             text: "The Meta single file need at least 1 element but got 0!",
                                             at: `${filename}.feno and _${filename}.feno`,
                                             solution: "Declare at least one element inside your Meta[] single file.",
-                                            info: "http://fenolang.org/docs/meta_elements#structure"
+                                            info: "https://fenolang.herokuapp.com/docs/meta_elements#structure"
                                         })
                                     }
                                 }

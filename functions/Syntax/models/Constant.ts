@@ -41,7 +41,7 @@ export default class Variable {
                 text: `Cannot assign to '${this.variable_name}' because it is a constant.`,
                 at: `${this.filename}.feno`,
                 solution: "Don't redeclare your constants.",
-                info: "http://fenolang.org/docs/variables#const"
+                info: "https://fenolang.herokuapp.com/docs/variables#const"
             })
         } else
             return true
@@ -52,7 +52,7 @@ export default class Variable {
             text: `Type '${type}' is not assignable to type '${this.type}'.`,
             at: `${this.variable} in ${this.filename}.feno`,
             solution: `Check that your types are correctly defined in ${this.filename}.feno file`,
-            info: `http://fenolang.org/docs/typing`
+            info: `https://fenolang.herokuapp.com/docs/typing`
         })
     }
 

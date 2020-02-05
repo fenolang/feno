@@ -45,7 +45,7 @@ export default class Variable {
             text: `Type '${type}' is not assignable to type '${this.type}'.`,
             at: `${this.variable} in ${this.filename}.feno`,
             solution: `Check that your types are correctly defined in ${this.filename}.feno file`,
-            info: `http://fenolang.org/docs/typing`
+            info: `https://fenolang.herokuapp.com/docs/typing`
         })
     }
 
@@ -54,7 +54,7 @@ export default class Variable {
             text: `Type '${type}' cannot implicity change its type.`,
             at: `${this.filename}.feno`,
             solution: `Check that your types are correctly defined in ${this.filename}.feno file`,
-            info: `http://fenolang.org/docs/typing`
+            info: `https://fenolang.herokuapp.com/docs/typing`
         })
     }
 

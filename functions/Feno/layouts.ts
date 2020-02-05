@@ -55,7 +55,7 @@ export class Transpilation {
                                     text: 'appView() function was not declared!',
                                     at: `/layouts/${this.req.layout}.feno`,
                                     solution: `Declare appView() function in your layouts.`,
-                                    info: 'http://fenolang.org/docs/layouts'
+                                    info: 'https://fenolang.herokuapp.com/docs/layouts'
                                 })
                             }
                         } else {
@@ -63,7 +63,7 @@ export class Transpilation {
                                 text: "Document instance was not found!",
                                 at: `/layouts/${this.req.layout}.feno`,
                                 solution: `Declare the Doc Instance inside ${this.req.layout}.feno layout.`,
-                                info: "http://fenolang.org/docs/doc_instance"
+                                info: "https://fenolang.herokuapp.com/docs/doc_instance"
                             })
                         }
                     })
@@ -72,7 +72,7 @@ export class Transpilation {
                         text: 'The layout was not found!',
                         at: `${this.req.filename}.feno`,
                         solution: `Don't call non existent layouts! Create the ${this.req.layout} layout to continue.`,
-                        info: 'http://fenolang.org/docs/layouts'
+                        info: 'https://fenolang.herokuapp.com/docs/layouts'
                     })
                 }
             })    

@@ -39,7 +39,7 @@ export default class Instance {
                 text: 'Feno class was declared without reason!',
                 at: `/pages/${this.filename}.feno`,
                 solution: `You must declare the Feno class only if you're going to use it`,
-                info: `http://fenolang.org/docs/feno_class`
+                info: `https://fenolang.herokuapp.com/docs/feno_class`
             })
         }
     }
@@ -64,7 +64,7 @@ export default class Instance {
                         text: 'Layout property has no content!',
                         at: `/pages/${this.filename}.feno`,
                         solution: "You should call a layout inside the layout property.",
-                        info: `http://fenolang.org/docs/layouts`
+                        info: `https://fenolang.herokuapp.com/docs/layouts`
                     })
                 }
             } else {

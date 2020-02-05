@@ -6,7 +6,7 @@ function stylesError(filename): void {
         text: "styles() function needs at least one parameter!",
         at: `${filename}.feno`,
         solution: "You need to call at least one stylesheet within the styles() function",
-        info: "http://fenolang.org/docs/meta_elements#styles"
+        info: "https://fenolang.herokuapp.com/docs/meta_elements#styles"
     })
 }
 
@@ -20,7 +20,7 @@ export function checkInstance(code: string, filename: string):string {
                 text: "Head instance was not found!",
                 at: `${filename}.feno`,
                 solution: "You should declare a Head instance before declaring inline styles",
-                info: `http://fenolang.org/docs/styles_instance`
+                info: `https://fenolang.herokuapp.com/docs/styles_instance`
             })
         }
     }

@@ -46,7 +46,7 @@ export default class Crystal {
                         text: `Crystal '${this.name}' does not wait '${probably_prop}' prop.`,
                         at: `${this.filename}.feno`,
                         solution: `Don't send props to crystals that doesn't wait any prop.`,
-                        info: "http://fenolang.org/docs/crystals"
+                        info: "https://fenolang.herokuapp.com/docs/crystals"
                     })
                     reject()
                 } else {

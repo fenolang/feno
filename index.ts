@@ -53,7 +53,7 @@ export async function main() {
                     text: "Feno configuration file was not found!",
                     at: "feconfig.feno",
                     solution: "Create a configuration file for Feno.",
-                    info: "http://fenolang.org/docs/config-file"
+                    info: "https://fenolang.herokuapp.com/docs/config-file"
                 })
                 resolve();
             }

@@ -48,7 +48,7 @@ function $watchChanges(config: Configuration) {
                                     text: "Document instance was not found!",
                                     at: `${basename}.feno`,
                                     solution: `Declare the Doc Instance inside ${basename}.feno file`,
-                                    info: "http://fenolang.org/docs/doc_instance"
+                                    info: "https://fenolang.herokuapp.com/docs/doc_instance"
                                 })
                             }
                         });
@@ -60,7 +60,7 @@ function $watchChanges(config: Configuration) {
                     text: "There are no pages in this project!",
                     at: `index.js`,
                     solution: "Create an index.feno file in /pages folder for start",
-                    info: "http://fenolang.org/docs/installation"
+                    info: "https://fenolang.herokuapp.com/docs/installation"
                 })
             }
         });
