@@ -33,7 +33,7 @@ Feno supports all browsers that are [ES5-compliant](http://kangax.github.io/comp
 
 ## Documentation
 
-You can learn all about Feno in our official documentation in: [Fenolang Website](https://fenolang.herokuapp.com)
+You can learn all about Feno in our official documentation in: [Fenolang Website](https://fenolang.herokuapp.com/docs/)
 
 ## Issues
 
@@ -41,7 +41,7 @@ Soon we will open a place on our site so you can freely report errors
 
 ## Changelog
 
-You can check the changelog in [our site](https://fenolang.herokuapp.com) or here [in github](https://github.com/fenolang/feno/blob/master/CHANGELOG.md)
+You can check the changelog in [our site](https://fenolang.herokuapp.com/roadmap) or here [in github](https://github.com/fenolang/feno/blob/master/CHANGELOG.md)
 
 ## Stay in touch
 
