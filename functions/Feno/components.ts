@@ -114,7 +114,7 @@ export async function transpile(config: Configuration) {
                         /** If there is a component declared in the file content */
                         if (find.component(data)) {
                             let component_name = data.match(/'(.*?)'(?=, ?{)/);
-                            let component_content = data.replace(/declare Component ?\('(.*?)', ?{([\s\S]*?)}\)/,'doc: {$2}');
+                            let component_content = data.replace(/declare Component ?\(['|"|`](.*?)['|"|`], ?{([\s\S]*?)}\)/,'doc: {$2}');
                             /** Transpile component */
                             let transpiled_content = await Core.Process({
                                 code: component_content,

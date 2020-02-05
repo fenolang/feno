@@ -26,7 +26,6 @@ export function checkNoScript(req: Request): string {
     } else {
         if (find.head(req.code)) {
             /** If a noscript is defined in configuration */
-            console.log(req.config)
             if (req.config.noscript && req.config.noscript.length && req.config.noscript != "") {
                 req.code = req.code.replace(/head: ?{([\s\S]*?)}/, `head: {$1<noscript>${req.config.noscript}</noscript>\n}`);
             }
