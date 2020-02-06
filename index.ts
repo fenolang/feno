@@ -68,14 +68,9 @@ async function server() {
     })
 }
 
-/*module.exports = {
-    run: async () => {
-        await main();
-        await server();
-    }
-}*/
-
 export async function run() {
     await main();
     await server();
 }
+
+run();

@@ -2,7 +2,7 @@ import { Configuration } from '@core/main-process';
 const beautify = require('js-beautify').html;
 import Variable from './Variable';
 import Constant from './Constant';
-import Crystal from './Crystal';
+import Cube from './Cube';
 import Error from './Error';
 import * as find from '@instances/find';
 import * as layouts from '@feno/layouts';
@@ -126,14 +126,14 @@ export default class Instance {
         }
     }
 
-    public async crystals() {
+    public async cubes() {
         return new Promise((resolve, reject) => {
-            if (find.crystal(this.structure)) {
-                let crystal_matches = this.structure.match(/declare Crystal .*?:[\s\S]*?}/g);
-                crystal_matches.forEach(async crystal_match => {
-                    let crystal = new Crystal(crystal_match, this.filename);
-                    await crystal.transpile(this.structure);
-                    this.structure = crystal.result;
+            if (find.cube(this.structure)) {
+                let cube_matches = this.structure.match(/declare Cube .*?:[\s\S]*?}/g);
+                cube_matches.forEach(async cube_match => {
+                    let cube = new Cube(cube_match, this.filename);
+                    await cube.transpile(this.structure);
+                    this.structure = cube.result;
                     this.structure = utils.basicFunctions(this.structure);
                 })
                 resolve();

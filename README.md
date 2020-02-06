@@ -21,15 +21,29 @@ Feno is a frontend programming language that offers a complete package of new to
 
 Feno supports all browsers that are [ES5-compliant](http://kangax.github.io/compat-table/es5/) (IE8 and below are not supported).
 
+## Installation
+
+```sh
+$ npm i feno
+```
+
+## Create projects
+
+To start a project with Feno you have two options:
+
+- Create a project from scratch. [Info Here](https://fenolang.herokuapp.com/docs/installation#scratch)
+- Create a project with [Feno CLI](https://www.npmjs.com/package/feno-cli). [Info Here](https://fenolang.herokuapp.com/docs/installation#cli)
+
 ## Ecosystem
 
-| Project | Description |
-|---------|--------|
-| [feno-cli] | Installation center and tools for feno |
-| [feno-web] | Official website |
+| Project | Package | Description |
+|---------|-------------|-------------|
+| [feno-cli] | [npm:feno-cli] |Create projects with Feno |
+| [feno-web] | Not available |Official website |
 
 [feno-cli]: https://github.com/fenolang/feno-cli
 [feno-web]: https://github.com/fenolang/feno-web
+[npm:feno-cli]: https://www.npmjs.com/package/feno-cli
 
 ## Documentation
 

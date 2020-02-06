@@ -7,7 +7,7 @@ import path from 'path';
 import * as utils from '../utils';
 import Variable from './Variable';
 import Constant from './Constant';
-import Crystal from './Crystal';
+import Cube from './Cube';
 const base = process.cwd();
 
 interface Request {
@@ -90,7 +90,7 @@ export default class Script {
 
     private async process() {
         return new Promise(async (resolve, reject) => {
-            await this.crystals();
+            await this.cubes();
             await this.variables();
             await this.constants();
             this.req.code = utils.basicFunctions(this.req.code);
@@ -138,14 +138,14 @@ export default class Script {
         })
     }
 
-    private async crystals() {
+    private async cubes() {
         return new Promise((resolve, reject) => {
-            if (/declare Crystal .*?:[\s\S]*?}/.test(this.req.code)) {
-                let crystal_matches = this.req.code.match(/declare Crystal .*?:[\s\S]*?}/g);
-                crystal_matches.forEach(async crystal_match => {
-                    let crystal = new Crystal(crystal_match, this.req.filename);
-                    await crystal.transpile(this.req.code);
-                    this.req.code = crystal.result;
+            if (/declare Cube .*?:[\s\S]*?}/.test(this.req.code)) {
+                let cube_matches = this.req.code.match(/declare Cube .*?:[\s\S]*?}/g);
+                cube_matches.forEach(async cube_match => {
+                    let cube = new Cube(cube_match, this.req.filename);
+                    await cube.transpile(this.req.code);
+                    this.req.code = cube.result;
                 })
                 resolve();
             } else {

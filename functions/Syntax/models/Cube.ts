@@ -1,6 +1,6 @@
 import Error from './Error';
 
-export default class Crystal {
+export default class Cube {
     body: string
     name: string
     result: string
@@ -8,7 +8,7 @@ export default class Crystal {
 
     constructor(body: string, filename: string) {
         this.body = body;
-        this.name = body.match(/Crystal (.*?):/)[1];
+        this.name = body.match(/Cube (.*?):/)[1];
         this.filename = filename;
     }
 
@@ -28,25 +28,25 @@ export default class Crystal {
                             let given_code = match.match(/, ?(.*)\)/)[1];
                             cases += `\tcase ${match_id}:\n\t\t\t${given_code}\n\t\t\tbreak;\n\t`
                         })   
-                        let crystal = `//Crystal: '${prop_name}'\nif (crystal == '${prop_name}') {\n\tswitch(opc) {\n\t${cases}\n\t}\n}`
-                        code = code.replace(prop, crystal);
+                        let cube = `//Cube: '${prop_name}'\nif (cube == '${prop_name}') {\n\tswitch(opc) {\n\t${cases}\n\t}\n}`
+                        code = code.replace(prop, cube);
                     } else {
-                        code = code.replace(prop, `// Crystal: '${prop_name}'`);
+                        code = code.replace(prop, `// Cube: '${prop_name}'`);
                     }
                 })
-                code = code.replace(/declare Crystal (.*?):([\s\S]*?)}/g, 'fun $1(crystal, opc) {$2}');
+                code = code.replace(/declare Cube (.*?):([\s\S]*?)}/g, 'fun $1(cube, opc) {$2}');
                 code = code.replace(/(.*?).send\("(.*?)", ?(.*)\)/g, '$1("$2", $3)')
                 this.result = code;
                 resolve()
             } else {
-                code = code.replace(/declare Crystal (.*?):([\s\S]*?)}/g, 'fun $1(crystal, opc) {$2}');
+                code = code.replace(/declare Cube (.*?):([\s\S]*?)}/g, 'fun $1(cube, opc) {$2}');
                 if (/(.*?).send\("(.*?)", ?(.*)\)/g.test(code)) {
                     let probably_prop = code.match(/(.*?).send\("(.*?)", ?(.*)\)/)[2];
                     new Error({
-                        text: `Crystal '${this.name}' does not wait '${probably_prop}' prop.`,
+                        text: `Cube '${this.name}' does not wait '${probably_prop}' prop.`,
                         at: `${this.filename}.feno`,
-                        solution: `Don't send props to crystals that doesn't wait any prop.`,
-                        info: "https://fenolang.herokuapp.com/docs/crystals"
+                        solution: `Don't send props to cubes that doesn't wait any prop.`,
+                        info: "https://fenolang.herokuapp.com/docs/cubes"
                     })
                     reject()
                 } else {

@@ -47,8 +47,8 @@ export function constant(code: string): boolean {
         return false
 }
 
-export function crystal(code: string): boolean {
-    if (/declare Crystal .*?:[\s\S]*?}/.test(code))
+export function cube(code: string): boolean {
+    if (/declare Cube .*?:[\s\S]*?}/.test(code))
         return true
     else
         return false
