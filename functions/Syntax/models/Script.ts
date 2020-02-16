@@ -7,7 +7,7 @@ import path from 'path';
 import * as utils from '../utils';
 import Variable from './Variable';
 import Constant from './Constant';
-import Cube from './Cube';
+import Vector from './Vector';
 const base = process.cwd();
 
 interface Request {
@@ -90,7 +90,7 @@ export default class Script {
 
     private async process() {
         return new Promise(async (resolve, reject) => {
-            await this.cubes();
+            await this.vectors();
             await this.variables();
             await this.constants();
             this.req.code = utils.basicFunctions(this.req.code);
@@ -138,14 +138,17 @@ export default class Script {
         })
     }
 
-    private async cubes() {
+    private async vectors() {
         return new Promise((resolve, reject) => {
-            if (/declare Cube .*?:[\s\S]*?}/.test(this.req.code)) {
-                let cube_matches = this.req.code.match(/declare Cube .*?:[\s\S]*?}/g);
-                cube_matches.forEach(async cube_match => {
-                    let cube = new Cube(cube_match, this.req.filename);
-                    await cube.transpile(this.req.code);
-                    this.req.code = cube.result;
+            // # Check if there are vectors
+            if (find.vector(this.req.code)) {
+                // # Find all vector declarations
+                let vector_matches = this.req.code.match(/declare Vector .*?:[\s\S]*?}/g);
+                vector_matches.forEach(async vector_match => {
+                    let vector = new Vector(vector_match, this.req.filename);
+                    // # Transpile vector -> function
+                    await vector.transpile(this.req.code);
+                    this.req.code = vector.result;
                 })
                 resolve();
             } else {

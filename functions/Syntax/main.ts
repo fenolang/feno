@@ -19,7 +19,7 @@ export async function $run(req: Request):Promise<string> {
         el.strings();
         el.constants();
         await el.layouts(req.config);
-        await el.cubes()
+        await el.vectors()
         el.destroy();
         resolve(el.getContent());
     })

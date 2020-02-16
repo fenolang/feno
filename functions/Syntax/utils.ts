@@ -3,7 +3,7 @@ export function basicFunctions(code: string) {
     code = code.replace(/msg\((.*?)\)/g, 'alert($1)');
 
     //functions
-    code = code.replace(/fun (\S*?) ?(\((.*?)\))? ?{/g,'function $1($3) {');
+    code = code.replace(/Fun (\S*?) ?(\((.*?)\))? ?:/g,'function $1($3) {');
 
     //conditionals
     code = code.replace(/if \(?(.*?)\)? ?[{|:]/g, 'if ($1) {');

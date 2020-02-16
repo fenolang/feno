@@ -2,7 +2,7 @@ import { Configuration } from '@core/main-process';
 const beautify = require('js-beautify').html;
 import Variable from './Variable';
 import Constant from './Constant';
-import Cube from './Cube';
+import Vector from './Vector';
 import Error from './Error';
 import * as find from '@instances/find';
 import * as layouts from '@feno/layouts';
@@ -126,14 +126,18 @@ export default class Instance {
         }
     }
 
-    public async cubes() {
+    public async vectors() {
         return new Promise((resolve, reject) => {
-            if (find.cube(this.structure)) {
-                let cube_matches = this.structure.match(/declare Cube .*?:[\s\S]*?}/g);
-                cube_matches.forEach(async cube_match => {
-                    let cube = new Cube(cube_match, this.filename);
-                    await cube.transpile(this.structure);
-                    this.structure = cube.result;
+            // # Find a vector
+            if (find.vector(this.structure)) {
+                let vector_matches = this.structure.match(/declare Vector .*?:[\s\S]*?}/g);
+                // For every vector
+                vector_matches.forEach(async vector_match => {
+                    let vector = new Vector(vector_match, this.filename);
+                    // # Transpile code of vector
+                    await vector.transpile(this.structure);
+                    this.structure = vector.result;
+                    // # Transpile code of vector properties
                     this.structure = utils.basicFunctions(this.structure);
                 })
                 resolve();

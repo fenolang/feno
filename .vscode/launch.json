@@ -11,11 +11,22 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/index.ts",
-            "preLaunchTask": "tsc: build - tsconfig.json",
+            "preLaunchTask": "tsc: watch - tsconfig.json",
+            "sourceMaps": true,
+            "smartStep": true,
+            "internalConsoleOptions": "openOnSessionStart",
+            "runtimeArgs": ["-r","ts-node/register"],
+            "args": ["${workspaceFolder}/index.ts"],
+            "cwd": "${workspaceFolder}",
+            "protocol": "inspector",
+            "remoteRoot": "${workspaceFolder}",
+            "localRoot": "${workspaceFolder}",
             "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ]
+                "${workspaceFolder}/../feno-dist/**/*.js"
+            ],
+            "env": {
+                "FENO_ENV": "local"
+            }
         }
     ]
 }
