@@ -44,12 +44,12 @@
     "paths": {
       "@root/*": ["./*"],
       "@config/*": ["./config/*"],
-      "@functions/*": ["./functions/*"],
-      "@core/*": ["./functions/Core/*"],
-      "@instances/*": ["./functions/Core/instances/*"],
-      "@feno/*": ["./functions/Feno/*"],
-      "@syntax/*": ["./functions/Syntax/*"],
-      "@test/*": ["./functions/Test/*"]
+      "@core/*": ["./packages/core/*"],
+      "@test/*": ["./functions/Test/*"],
+      "@packages/*": ["./packages/*"],
+      "@main/*": ["./packages/main/*"],
+      "@utils/*": ["./packages/utils/*"],
+      "@models/*": ["./packages/models/*"]
     },                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
     // "typeRoots": [],                       /* List of folders to include type definitions from. */

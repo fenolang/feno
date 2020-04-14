@@ -1,9 +1,11 @@
-import * as Core from '@core/main-process';
-import * as find from '@instances/find';
+import { Program } from '@main/Program'
+import * as find from '@utils/find';
 import { getPublic } from '@config/env';
-import { Configuration } from '@core/main-process';
+import { Configuration } from './Program';
+import { Request } from './Program'
 import path from 'path';
 import fse from 'fs-extra';
+import Error from '@models/Error'
 const base = process.cwd();
 
 export function analyzeProps(code: string): string {
@@ -116,12 +118,13 @@ export async function transpile(config: Configuration) {
                             let component_name = data.match(/['|"|`](.*?)['|"|`](?=, ?{)/);
                             let component_content = data.replace(/declare Component ?\(['|"|`](.*?)['|"|`], ?{([\s\S]*?)}\)/,'doc: {$2}');
                             /** Transpile component */
-                            let transpiled_content = await Core.Process({
-                                code: component_content,
-                                type: 'component',
+                            let process = new Program({
+                                type: "component",
                                 filename: basename,
-                                config: config
-                            });
+                                config: config,
+                                code: component_content
+                            })
+                            let transpiled_content = await process.exec()
                             /** Define content inside a template */
                             transpiled_content = transpiled_content.replace(/<body>([\s\S]*?)<\/body>/g,'<template id="doc">$1<template>')
                             let component = new Component(component_name[0]);
@@ -152,4 +155,47 @@ export async function transpile(config: Configuration) {
             })
         }
     })
+}
+
+export async function test(req: Request) {
+    if (find.component(req.code)) {
+        var components_declaration: string = "";
+        let component_name = req.code.match(/['|"|`](.*?)['|"|`](?=, ?{)/);
+        let component_content = req.code.replace(/declare Component ?\(['|"|`](.*?)['|"|`], ?{([\s\S]*?)}\)/, 'doc: {$2}');
+        /** Transpile component */
+        let transpilation = new Program({
+            type: "component",
+            filename: "test",
+            config: req.config,
+            code: component_content
+        })
+        let transpiled_content = await transpilation.exec()
+        /** Define content inside a template */
+        transpiled_content = transpiled_content.replace(/<body>([\s\S]*?)<\/body>/g, '<template id="doc">$1<template>')
+        let component = new Component(component_name[0]);
+        if (/{{ ?props\.(.*?) ?}}/.test(transpiled_content)) {
+            /** Transpile called props */
+            let props_array = transpiled_content.match(/{{ ?props\.(.*?) ?}}/g)
+            /** Detect props and transpile to JavaScript */
+            props_array.forEach(prop_call => {
+                prop_call = prop_call.split(/{{ ?props\./).join('');
+                prop_call = prop_call.split(/ ?}}/).join('');
+                component.addVariable(prop_call);
+            })
+            component.closeAttributes();
+            transpiled_content = analyzeProps(transpiled_content);
+        } else {
+            component.attributes = "";
+            component.addContent(transpiled_content);
+            components_declaration = `${components_declaration}\n\n${component.formatCode()}`;
+            return components_declaration;
+        }
+    } else {
+        new Error({
+            text: "Component declaration not found",
+            at: "test",
+            solution: "Declare a component in yout test",
+            info: "https://fenolang.herokuapp.com/docs/components"
+        })
+    }
 }

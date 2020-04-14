@@ -1,26 +1,19 @@
-export function head(code: string): boolean {
-    if (/head: ?\n?.*?{[\s\S]*?\n}/.test(code)) // Si se ha declarado la instancia head
+export function render(code: string): boolean {
+    if (/<render>[\s\S]*<render>/.test(code))
         return true
     else
         return false
 }
 
-export function transpiledHead(code: string): boolean {
-    if (/<head>[\s\S]*<\/head>/.test(code))
+export function meta(code: string): boolean {
+    if (/<meta>[\s\S]*<meta>/.test(code))
         return true
     else
         return false
 }
 
 export function noscript(code: string): boolean {
-    if (/noscript: ?{([\s\S]*?)}/.test(code))
-        return true
-    else
-        return false
-}
-
-export function doc(code: string): boolean {
-    if (/doc: ?\n?.*?{[\s\S]*?}/.test(code))
+    if (/<noscript>[\s\S]*<\/noscript>/.test(code))
         return true
     else
         return false
@@ -30,11 +23,11 @@ export function component(code: string): boolean {
     if (/declare Component ?\(['|"|`](.*?)['|"|`], ?{([\s\S]*?)}\)/.test(code))
         return true
     else
-        return false 
+        return false
 }
 
 export function variable(code: string): boolean {
-    if (/def (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/.test(code)) 
+    if (/def (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/.test(code))
         return true
     else
         return false
@@ -49,6 +42,13 @@ export function constant(code: string): boolean {
 
 export function vector(code: string): boolean {
     if (/declare Vector .*?:[\s\S]*?}/.test(code))
+        return true
+    else
+        return false
+}
+
+export function state(code: string): boolean {
+    if (/declare State .*?: ?.*?;/.test(code))
         return true
     else
         return false

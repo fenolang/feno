@@ -1,43 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
-    <script src="/scripts/test.js"></script>
+    <title>Bienvenido a mi pagina</title>
+
+    <meta charset="utf-8">
+
     <noscript>
-        <p>Necesito JS!</p>
+        <h1>No amigo</h1>
     </noscript>
-    <script src="./scripts/components.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/sdsds.css">
+
+    <!-- JS SCRIPTS -->
+    <script src="/scripts/sdsds.js"></script>
+
+    <style>
+        .css {
+            color: #0a8cbd;
+        }
+    </style>
 </head>
 
 <body>
-    <p>Hola Mundo</p>
+    <h1>Mi layout</h1>
+
+    <p class="css">
+        <slot name="hola"></slot>
+    </p>
+
+
+
 </body>
-
 <script>
-    // Vector: 'myvector'
-    function vc_myvector(vector, opc) {
-        console.log("bienvenido")
-        //Property: 'hola'
-        if (vector == 'hola') {
-            switch (opc) {
-                case 0:
-
-                    let variable = "adios";
-                    console.log(variable)
-
-                    break;
-
-            }
-        }
-    }
-
-    function function1() {
-        console.log("Esta es mi funcion: function1")
-        vc_myvector("hola", 0)
-    }
-
-    function1()
-    document.querySelector('[name="variable"]').innerHTML = variable;
+    let hola = "Hola Mundo";
+    document.querySelector('[name="hola"]').innerHTML = hola;
 </script>
 
 </html>

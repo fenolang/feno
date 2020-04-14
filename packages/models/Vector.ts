@@ -20,7 +20,7 @@ export default class Vector {
                 // # For every property
                 prop_matches.forEach((prop: string, prop_id: number) => {
                     let prop_name = prop.match(/"(.*?)"/)[1];
-                    let assignaments = new RegExp(`Vector ${this.name} ?\\(${prop_name}\\):([\\s\\S]*?)}`, 'g');
+                    let assignaments = new RegExp(`Vector ${this.name} ?\\(${prop_name}\\){([\\s\\S]*?)}`, 'g');
                     // # Check if there are assignaments to vector
                     if (assignaments.test(code)) {
                         let assignament_matches = code.match(assignaments);
@@ -31,7 +31,7 @@ export default class Vector {
                             // # Replace vector use for function call
                             code = code.replace(assignament, `vc_${this.name}("${prop_name}", ${assignament_id})`)
                             // # Get given code to vector
-                            let given_code = assignament.match(new RegExp(`${this.name}\\((.*?)\\):([\\s\\S]*?)}`))[2]
+                            let given_code = assignament.match(new RegExp(`${this.name}\\((.*?)\\){([\\s\\S]*?)}`))[2]
                             cases += `\tcase ${assignament_id}:\n\t\t\t${given_code}\n\t\t\tbreak;\n\t`
                         })   
                         let vector = `//Property: '${prop_name}'\nif (vector == '${prop_name}') {\n\tswitch(opc) {\n\t${cases}\n\t}\n}`
@@ -41,15 +41,15 @@ export default class Vector {
                     }
                 })
                 // # Transform Vector declaration to a function declaration
-                code = code.replace(/declare Vector (.*?):([\s\S]*?)}/g, `// Vector: '${this.name}'\nFun vc_$1(vector, opc) :$2}`);
+                code = code.replace(/declare Vector (.*?){([\s\S]*?)}/g, `// Vector: '${this.name}'\nfun vc_$1(vector, opc) {$2}`);
                 this.result = code;
                 resolve()
             } else {
                 // # Transform Vector declaration to a function declaration
-                code = code.replace(/declare Vector (.*?):([\s\S]*?)}/g, 'Fun $1(vector, opc) {$2}');
+                code = code.replace(/declare Vector (.*?){([\s\S]*?)}/g, 'fun $1(vector, opc) {$2}');
                 // # If there are assignaments to the vector
-                if (/Vector (.*?) ?\((.*?)\):([\s\S]*?)}/g.test(code)) {
-                    let probably_prop = code.match(/Vector (.*?) ?\((.*?)\):([\s\S]*?)}/)[2];
+                if (/Vector (.*?) ?\((.*?)\){([\s\S]*?)}/g.test(code)) {
+                    let probably_prop = code.match(/Vector (.*?) ?\((.*?)\){([\s\S]*?)}/)[2];
                     // Return error because this vector does not wait any prop and the user is giving one
                     new Error({
                         text: `Vector '${this.name}' does not wait '${probably_prop}' prop.`,

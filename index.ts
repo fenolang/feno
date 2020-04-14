@@ -2,26 +2,25 @@ import 'module-alias/register'
 import clear from '@config/clear';
 import fse from 'fs-extra';
 
-//Modules
-import Error from '@syntax/models/Error';
-import * as Watcher from '@core/watcher';
-import * as listen from '@core/server';
+import Watcher from '@core/Watcher'
+import Server from '@core/Server'
 
 //Interfaces
-import { Configuration } from '@core/main-process';
+import { Configuration } from '@main/Program';
 
 const base = process.cwd();
 
 clear();
 
-export async function main() {
+async function config() {
     return new Promise(async (resolve, reject) => {
-        fse.pathExists(`${base}/feconfig.feno`, (err: string, exists: boolean) => {
-            if (err) return console.error(err);
+        fse.pathExists(`${base}/src/feconfig.feno`, (err: string, exists: boolean) => {
+            if (err) return console.error(err)
             if (exists) {
-                fse.readFile(`${base}/feconfig.feno`, 'utf8', async (err: string, data: string) => {
-                    if (err) return console.error(err);
+                fse.readFile(`${base}/src/feconfig.feno`, 'utf8', async (err: string, data: string) => {
+                    if (err) return console.error(err)
                     let config: Configuration = {
+                        port: 4000,
                         outDir: "",
                         stylesDir: "",
                         scriptsDir: "",
@@ -44,33 +43,35 @@ export async function main() {
                         config.noscript = data.match(/noScript: ?{([\s\S]*?)},?/)[1]
                     else
                         config.noscript = ""
-
-                    await Watcher.watch(config);
-                    resolve();
+                    
+                    resolve(config)
                 })
-            } else {
-                new Error({
-                    text: "Feno configuration file was not found!",
-                    at: "feconfig.feno",
-                    solution: "Create a configuration file for Feno.",
-                    info: "https://fenolang.herokuapp.com/docs/config-file"
-                })
-                resolve();
-            }
+            } else
+                resolve()
         })
     })
 }
 
-async function server() {
+export async function main(config) {
+    return new Promise(async (resolve, reject) => {
+        let watcher = new Watcher(config)
+        await watcher.exec()
+        resolve();
+    })
+}
+
+async function server(config) {
     return new Promise((resolve, reject) => {
-        listen.$on();
+        let server = new Server(config)
+        server.exec()
         resolve();
     })
 }
 
 export async function run() {
-    await main();
-    await server();
+    let configuration = await config()
+    await main(configuration);
+    await server(configuration);
 }
 
-run();
+run()

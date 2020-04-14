@@ -7,7 +7,7 @@ const base = process.cwd()
 
 async function build() {
     return new Promise(async (resolve, reject) => {
-        await feno.main()
+        await feno.run()
         clear();
         fse.copy(getPublic(), `${base}/dist`, (err: string) => {
             if (err) return console.error(err);

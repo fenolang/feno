@@ -13,6 +13,12 @@ function detectEnv(): void {
         env = "dev"
 }
 
+export function getEnv(): string {
+    if (process.env.FENO_ENV) {
+        return process.env.FENO_ENV
+    } else
+        return "dev"
+}
 
 export function getPublic() {
     detectEnv();

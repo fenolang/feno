@@ -1,10 +1,10 @@
 import { getPublic } from '@config/env';
-import { Configuration } from '@core/main-process';
-import * as find from '@instances/find';
+import { Configuration } from '@main/Program';
+import * as find from '@utils/find';
 import beautify from 'js-beautify';
 import fse from 'fs-extra';
 import path from 'path';
-import * as utils from '../utils';
+import { functions } from '@main/Program'
 import Variable from './Variable';
 import Constant from './Constant';
 import Vector from './Vector';
@@ -16,7 +16,7 @@ interface Request {
 }
 
 export default class Script {
-    req: Request;
+    public req: Request;
 
     constructor() {
     }
@@ -88,12 +88,12 @@ export default class Script {
         })
     }
 
-    private async process() {
+    public async process() {
         return new Promise(async (resolve, reject) => {
             await this.vectors();
             await this.variables();
             await this.constants();
-            this.req.code = utils.basicFunctions(this.req.code);
+            this.req.code = functions(this.req.code);
             this.req.code = beautify(this.req.code);
             resolve()
         })
