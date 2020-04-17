@@ -40,25 +40,19 @@ export default class Gist {
             //this.structure = this.structure.replace(/new Feno ?\({([\s\S]*?)}\)/, `new Feno({$1\t${apply_code}\n})`);
         }
     }
-    
-    public async strings() {
+
+    public async variables() {
         if (find.variable(this.code)) {
-            let lines: string[] = this.code.split(/\n/);
-            await new Promise((resolve, reject) => {
-                lines.forEach(async line => {
-                    // Si la línea tiene una declaración de variable
-                    if (find.variable(line)) {
-                        let variable = new Variable({
-                            var: line.match(/def (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/)[0],
-                            filename: this.filename
-                        })
-                        if (variable.checkType() && variable.checkAssignmentTypes(this.code)) {
-                            this.html = variable.transpile(this.html);
-                            this.applyVariables(variable.variable_name);
-                        }
-                    }
+            let variables = this.code.match(/\bdef (.*?) (.*?|[\s\S]*?)\n?as (String|Number|Boolean|Array|Object|Any)/g)
+            variables.forEach(code => {
+                let variable = new Variable({
+                    var: code,
+                    filename: this.filename
                 })
-                resolve(this.html);
+                if (variable.checkType() && variable.checkAssignmentTypes(this.code)) {
+                    this.html = variable.transpile(this.html);
+                    this.applyVariables(variable.variable_name);
+                }
             })
         }
     }

@@ -1,11 +1,5 @@
 import Error from './Error';
 
-/*const String = `"(.*?)"|'(.*?)'|\`[\\s\\S]*?\``;
-const Number = `[0-9]*?`;
-const Boolean = `true|false`;
-const Object = `{[\\s\\S]*?}`;
-const Array = `\[[\\s\\S]*?\]`;*/
-
 interface Params {
     var: string;
     filename: string;
@@ -20,23 +14,22 @@ export default class Variable {
     filename: string = ""
 
     // Types
-    String = `"(.*?)"|'(.*?)'|\`[\\s\\S]*?\``;
-    Number = `[0-9]+`;
+    String = `["|'|\`].*?["|'|\`]`;
+    Number = `\\d`;
     Boolean = `true|false`;
     Object = `{[\\s\\S]*?}`;
     Array = `\[[\\s\\S]*?\]`;
 
     constructor(instance:Params) {
         this.variable = instance.var;
-        this.value = this.variable.match(/def (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/)[3];
-        this.variable_name = this.variable.match(/def (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/)[2];
-        this.type = this.variable.match(/def (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/)[1];
+        this.variable_name = this.variable.match(/\bdef (.*?) (.*?|[\s\S]*?)\n?as (String|Number|Boolean|Array|Object|Any)/)[1]
+        this.value = this.variable.match(/\bdef (.*?) (.*?|[\s\S]*?)\n?as (String|Number|Boolean|Array|Object|Any)/)[2]
+        this.type = this.variable.match(/\bdef (.*?) (.*?|[\s\S]*?)\n?as (String|Number|Boolean|Array|Object|Any)/)[3]
         this.filename = instance.filename;
     }
 
     public transpile(code: string): string {
-        let regex = new RegExp(`def ${this.type} ${this.variable_name} ?= ?${this.value};`, 'g');
-        code = code.replace(regex, `let ${this.variable_name} = ${this.value};`);
+        code = code.replace(this.variable, `let ${this.variable_name} = ${this.value};`);
         return code;
     }
 
@@ -80,40 +73,38 @@ export default class Variable {
     }
 
     public checkType() { 
+        /** ANY */
+        if (this.type == "Any")
+            return true
         /** STRING */
-        if (/"(.*?)"|'(.*?)'|`(.*?)`/.test(this.value)) {
-            if (this.type == 'String' || this.type == 'Any')
-                return true;
-            else {
-                this.returnError('String');
-            }
+        else if (this.type == "String") {
+            if (!/\d|true|false|{[\s\S]*?}|\[[\s\S]*?\]/.test(this.value))
+                return true
+            else this.returnError("String")
+        }
+        /** NUMBER */
+        else if (this.type == "Number") {
+            if (!/true|false|{[\s\S]*?}|\[[\s\S]*?\]|["|'|`].*?["|'|`]/.test(this.value))
+                return true
+            else this.returnError("Number")
+        }
         /** OBJECT */
-        } else if (/{(.*?|[\s\S]*?)}/.test(this.value)) {
-            if (this.type == 'Object' || this.type == 'Any')
+        else if (this.type == "Object") {
+            if (!/(?!{)(.*)\d|true|false|\[[\s\S]*?\]|["|'|`].*?["|'|`](?![\s\S]*?})/.test(this.value))
                 return true
-            else {
-                this.returnError('Object');
-            }
+            else this.returnError("Object")
+        }
         /** ARRAY */
-        } else if (/\[(.*?|[\s\S]*?)]/.test(this.value)) {
-            if (this.type == 'Array' || this.type == 'Any')
+        else if (this.type == "Array") {
+            if (!/\d|true|false|{[\\s\\S]*?}|["|'|`].*?["|'|`](?![\s\S]*?\])/.test(this.value))
                 return true
-            else {
-                this.returnError('Array');
-            }
+            else this.returnError("Array")
+        }
         /** BOOLEAN */
-        } else if (/true|false/.test(this.value)) {
-            if (this.type == 'Boolean' || this.type == 'Any')
+        else if (this.type == "Boolean") {
+            if (!/\d|{[\s\S]*?}|\[[\s\S]*?\]|["|'|`].*?["|'|`]/.test(this.value))
                 return true
-            else {
-                this.returnError('Boolean');
-            }
-        } else if (/\d/.test(this.value)) {
-            if (this.type == 'Number' || this.type == 'Any')
-                return true
-            else {
-                this.returnError('Number');
-            }
+            else this.returnError("Boolean")
         }
     }
 }

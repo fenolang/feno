@@ -20,6 +20,7 @@ class Component {
     query_selectors: string = "";
     get_and_sets: string = "";
     content: string = "";
+    script: string = ""
 
     constructor (component_name: string) {
         this.name = component_name;
@@ -38,6 +39,10 @@ class Component {
 
     public addQuerySelector(variable: string) {
         this.query_selectors += `instance.querySelector('[name="${variable}"]').innerHTML = this.${variable};\n`
+    }
+
+    public addScript(script: string) {
+        this.script = `let script_tag = document.createElement('script')\nscript_tag.textContent = \`${script}\`\ninstance.appendChild(script_tag)`
     }
 
     public addContent(code: string): void {
@@ -67,7 +72,7 @@ set ${variable} (val) {
     }
 
     public formatCode(): string {
-        return `customElements.define(${this.name}, class extends HTMLElement {
+        return `customElements.define("${this.name}", class extends HTMLElement {
     constructor() {
         super();
         ${this.super_variables}
@@ -89,6 +94,7 @@ set ${variable} (val) {
         doc.innerHTML = \`${this.content}\`;
         let t = doc.querySelector('#doc');
         let instance = t.content.cloneNode(true);
+        ${this.script}
 
         ${this.query_selectors}
 
@@ -103,54 +109,64 @@ set ${variable} (val) {
 export async function transpile(config: Configuration) {
     /** Read all files in components folder */
     fse.readdir(`${base}/src/components/`, async (err: string, files: string[]) => {
-        if (err) return console.error(err);
+        if (err) return console.error(err)
         if (files && files.length) {
-            var components_declaration: string = "";
+            var components_declaration: string = ""
             files.forEach(async (file) => {
-                let ext = path.extname(file);
+                let ext = path.extname(file)
                 // If the file is a feno script
                 if (ext == '.feno') {
-                    let basename = path.basename(file, path.extname(file));
-                    fse.readFile(`${base}/src/components/${file}`, 'utf8', async (err: string, data: string) => {
-                        if (err) return console.error(err);
-                        /** If there is a component declared in the file content */
-                        if (find.component(data)) {
-                            let component_name = data.match(/['|"|`](.*?)['|"|`](?=, ?{)/);
-                            let component_content = data.replace(/declare Component ?\(['|"|`](.*?)['|"|`], ?{([\s\S]*?)}\)/,'doc: {$2}');
-                            /** Transpile component */
-                            let process = new Program({
-                                type: "component",
-                                filename: basename,
-                                config: config,
-                                code: component_content
+                    let basename = path.basename(file, path.extname(file))
+
+                    let data = await fse.readFile(`${base}/src/components/${file}`, 'utf8')
+                    if (find.component(data)) {
+                        /** Get data of the component */
+                        let component_name = data.match(/<component name="(.*?)">[\s\S]*<component>/)[1]
+                        let component_content = data.match(/<component name=".*?">([\s\S]*)<component>/)[1]
+                        // Transpile content
+                        let program = new Program({
+                            type: "component",
+                            filename: basename,
+                            config: config,
+                            code: component_content
+                        })
+                        await program.execute()
+                        let transpiled_content = program.result
+
+                        // Get body tag
+                        let original_content = transpiled_content
+                        transpiled_content = transpiled_content.match(/<body>([\s\S]*?)<\/body>/)[1]
+                        transpiled_content = `<template id="doc">${transpiled_content}</template>`
+
+                        let component = new Component(component_name)
+                        if (/{{ ?props\.(.*?) ?}}/.test(transpiled_content)) {
+                            /** Transpile called props */
+                            let props_array = transpiled_content.match(/{{ ?props\.(.*?) ?}}/g)
+                            /** Detect props and transpile to JavaScript */
+                            props_array.forEach(prop_call => {
+                                prop_call = prop_call.split(/{{ ?props\./).join('');
+                                prop_call = prop_call.split(/ ?}}/).join('');
+                                component.addVariable(prop_call);
                             })
-                            let transpiled_content = await process.exec()
-                            /** Define content inside a template */
-                            transpiled_content = transpiled_content.replace(/<body>([\s\S]*?)<\/body>/g,'<template id="doc">$1<template>')
-                            let component = new Component(component_name[0]);
-                            if (/{{ ?props\.(.*?) ?}}/.test(transpiled_content)) {
-                                /** Transpile called props */
-                                let props_array = transpiled_content.match(/{{ ?props\.(.*?) ?}}/g)
-                                /** Detect props and transpile to JavaScript */
-                                props_array.forEach(prop_call => {
-                                    prop_call = prop_call.split(/{{ ?props\./).join('');
-                                    prop_call = prop_call.split(/ ?}}/).join('');
-                                    component.addVariable(prop_call);
-                                })    
-                                component.closeAttributes();
-                                transpiled_content = analyzeProps(transpiled_content);
-                            } else 
-                                component.attributes = "";
-                            component.addContent(transpiled_content);
-                            components_declaration = `${components_declaration}\n\n${component.formatCode()}`;
-                            // If we are in the last file of the folder
-                            if (files[files.length - 1] == file) {
-                                fse.writeFile(path.join(getPublic(), '/scripts/components.js'), components_declaration, (err: string) => {
-                                    if (err) return console.error(err);
-                                })
-                            }
+                            component.closeAttributes();
+                            transpiled_content = analyzeProps(transpiled_content);
+                        } else
+                            component.attributes = "";
+                        component.addContent(transpiled_content);
+
+                        if (/<script>([\s\S]*?)<\/script>/.test(original_content)) {
+                            let script_tag = original_content.match(/<script>([\s\S]*?)<\/script>/)[1]
+                            component.addScript(script_tag)
                         }
-                    })
+
+                        components_declaration = `${components_declaration}\n\n${component.formatCode()}`;
+                    }
+                    // If we are in the last file of the folder
+                    if (files[files.length - 1] == file) {
+                        fse.writeFile(path.join(getPublic(), '/scripts/components.js'), components_declaration, (err: string) => {
+                            if (err) return console.error(err);
+                        })
+                    }
                 }
             })
         }

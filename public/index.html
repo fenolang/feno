@@ -7,35 +7,22 @@
     <meta charset="utf-8">
 
     <noscript>
-        <h1>No amigo</h1>
+        <p>Necesito JS!</p>
     </noscript>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="/css/sdsds.css">
-
     <!-- JS SCRIPTS -->
-    <script src="/scripts/sdsds.js"></script>
-
-    <style>
-        .css {
-            color: #0a8cbd;
-        }
-    </style>
+    <script src="/scripts/components.js"></script>
 </head>
 
 <body>
-    <h1>Mi layout</h1>
-
-    <p class="css">
-        <slot name="hola"></slot>
-    </p>
-
-
-
+    <h1 name="hola">Hola Mundo</h1>
+    <mi-comp texto="Bienvenidos a todos"></mi-comp>
 </body>
-<script>
-    let hola = "Hola Mundo";
-    document.querySelector('[name="hola"]').innerHTML = hola;
-</script>
+<script>let exists = false;
+
+if (exists)
+    console.log("EXISTE!")
+else
+    console.log("NO EXISTE!")</script>
 
 </html>

@@ -63,6 +63,21 @@ export class Program {
         this.req.code = req.code
     }
 
+    get result(): string {
+        return this.req.html
+    }
+
+    public async execute() {
+        if (this.req.type == "page") {
+            this.checkExistance()
+            await this.main()
+            await this.save()
+        } else if (this.req.type == "component") {
+            this.checkExistance()
+            await this.main()
+        }
+    }
+
     public async run() {
         this.checkExistance()
         //await this.main()
@@ -73,6 +88,7 @@ export class Program {
     // # Function for other kind of compilations (components, etc...)
     public async exec() {
         //await this.main()
+        this.checkExistance()
         await this.main()
         return beautify(this.req.html)
     }
@@ -210,15 +226,18 @@ export class Program {
             this.req.code = this.req.code.replace(/set layout ['|"|`](.*?)['|"|`]/, "")
 
             // Get and set script tag
-            this.req.html = this.req.html.replace(/<script>[\s\S]*<\/script>/, `<script>${beautifyjs(this.req.code)}</script>`)
+            this.req.html = this.req.html.replace(/<script>[\s\S]*<\/script>/, `<script>${this.req.code}</script>`)
 
             // Transpile javascript code in script tag
             let gist = new Gist({ filename: this.req.filename, html: this.req.html })
-            gist.strings()
+            gist.variables()
             gist.constants()
             gist.state_properties()
             await gist.vectors()
             this.req.html = gist.getContent()
+
+            let script_tag = this.req.html.match(/<script>([\s\S]*)<\/script>/)[1]
+            this.req.html = this.req.html.replace(/<script>[\s\S]*<\/script>/, `<script>${beautifyjs(script_tag)}</script>`)
 
             resolve()
 
@@ -306,9 +325,11 @@ export function functions(code: string): string {
     code = code.replace(/fun (\S*?) ?(\((.*?)\))? ?{/g, 'function $1($3) {')
 
     //conditionals
-    code = code.replace(/if \(?(.*?)\)? ?{/g, 'if ($1) {')
-    code = code.replace(/else ?{/g, 'else {')
-    code = code.replace(/elif \(?(.*?)\)? ?{/g, 'else if ($1) {')
+    code = code.replace(/if \(?(.*?)\)? {/g, 'if ($1) {')
+    code = code.replace(/elif \(?(.*?)\)? {/g, 'else if ($1) {')
+
+    code = code.replace(/if \(?(.*)\)?/g, 'if ($1)')
+    code = code.replace(/elif \(?(.*)\)?/g, 'else if ($1)')
 
     return code
 }

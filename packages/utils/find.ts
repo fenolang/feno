@@ -20,14 +20,14 @@ export function noscript(code: string): boolean {
 }
 
 export function component(code: string): boolean {
-    if (/declare Component ?\(['|"|`](.*?)['|"|`], ?{([\s\S]*?)}\)/.test(code))
+    if (/<component name=".*?">[\s\S]*<component>/.test(code))
         return true
     else
         return false
 }
 
 export function variable(code: string): boolean {
-    if (/def (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/.test(code))
+    if (/\bdef (.*?) (.*?|[\s\S]*?)\n?as (String|Number|Boolean|Array|Object|Any)/.test(code))
         return true
     else
         return false
