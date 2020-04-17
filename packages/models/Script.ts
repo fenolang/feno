@@ -30,62 +30,38 @@ export default class Script {
     }
 
     public async checkDeletedScripts(config: Configuration) {
-        return new Promise((resolve, reject) => {
-            fse.readdir(path.join(getPublic(), `/scripts`), (err: string, files: []) => {
-                if (err) return console.error(err);
-                if (files && files.length) {
-                    files.forEach(file => {
-                        let filename = path.basename(file, path.extname(file));
-                        if (filename != 'components') {
-                            fse.pathExists(`${base}/src/${config.scriptsDir}${filename}.feno`, (err: string, exists: boolean) => {
-                                if (err) return console.error(err);
-                                if (!exists) {
-                                    fse.remove(path.join(getPublic(), `/scripts/${file}`), (err: string) => {
-                                        if (err) return console.error(err);
-                                    })
-                                }
-                            })    
-                        }
-                    })
-                    resolve();
-                } else {
-                    resolve();
+        let files: [] = await fse.readdir(path.join(getPublic(), `/scripts`))
+        if (files && files.length) {
+            files.forEach(async file => {
+                let filename = path.basename(file, path.extname(file));
+                if (filename != "components") {
+                    let file_exists = await fse.pathExists(`${base}/src/${config.scriptsDir}${filename}.feno`)
+                    if (!file_exists)
+                        await fse.remove(path.join(getPublic(), `/scripts/${file}`))
                 }
             })
-        })
+        }
     }
 
     public async observe(config: Configuration) {
-        return new Promise((resolve, reject) => {
-            fse.readdir(`${base}/src/${config.scriptsDir}`, (err: string, files: []) => {
-                if (err) return console.error(err);
-                /** If there are scripts */
-                if (files && files.length) {
-                    files.forEach(file => {
-                        let ext = path.extname(file);
-                        /** If the file is a feno script */
-                        if (ext == '.feno') {
-                            fse.readFile(`${base}/src/${config.scriptsDir}${file}`, 'utf8', async (err: string, data: string) => {
-                                if (data && data.length) {
-                                    if (err) return console.error(err);
-                                    this.req = {
-                                        filename: path.basename(file, path.extname(file)),
-                                        code: data
-                                    }
-                                    await this.process();
-                                    fse.writeFile(path.join(getPublic(), `/scripts/${this.req.filename}.js`), this.req.code, (err: string) => {
-                                        if (err) return console.error(err);
-                                    })
-                                }
-                            })
+        let files = await fse.readdir(`${base}/src/${config.scriptsDir}`)
+        if (files && files.length) {
+            files.forEach(async file => {
+                let ext = path.extname(file)
+                /** If the file is a feno script */
+                if (ext == ".feno") {
+                    let file_content = await fse.readFile(`${base}/src/${config.scriptsDir}${file}`, 'utf8')
+                    if (file_content && file_content.length) {
+                        this.req = {
+                            filename: path.basename(file, path.extname(file)),
+                            code: file_content
                         }
-                    })
-                    resolve();
-                } else {
-                    resolve();
+                        await this.process()
+                        await fse.writeFile(path.join(getPublic(), `/scripts/${this.req.filename}.js`), this.req.code)
+                    }
                 }
             })
-        })
+        }
     }
 
     public async process() {
@@ -100,42 +76,37 @@ export default class Script {
     }
 
     private async variables() {
-        return new Promise((resolve, reject) => {
-            let lines: string[] = this.req.code.split(/\n/);
-            lines.forEach(line => {
-                if (find.variable(line)) {
-                    let variable = new Variable({
-                        var: line.match(/def (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/)[0],
-                        filename: this.req.filename
-                    })
-                    /** Check if types are correct in var */
-                    if (variable.checkType() && variable.checkAssignmentTypes(this.req.code)) {
-                        // Transpile variable to JS
-                        this.req.code = variable.transpile(this.req.code);
-                    }
+        /** Check if contents variable declarations */
+        if (find.variable(this.req.code)) {
+            let variables = this.req.code.match(/\bdef (.*?) (.*?|[\s\S]*?)\n?as (String|Number|Boolean|Array|Object|Any)/g)
+            variables.forEach(code => {
+                let variable = new Variable({
+                    var: code,
+                    filename: this.req.filename
+                })
+                /** Check types */
+                if (variable.checkType() && variable.checkAssignmentTypes(this.req.code)) {
+                    this.req.code = variable.transpile(this.req.code);
                 }
             })
-            resolve();
-        })
+        }
     }
 
     private async constants() {
-        return new Promise((resolve, reject) => {
-            let lines: string[] = this.req.code.split(/\n/);
-            lines.forEach(line => {
-                if (find.constant(line)) {
-                    let constant = new Constant({
-                        var: line.match(/const (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/)[0],
-                        filename: this.req.filename
-                    })
-                    /** Check if types are correct in constant */
-                    if (constant.checkType() && constant.checkNoAssignaments(this.req.code)) {
-                        this.req.code = constant.transpile(this.req.code);
-                    }
+        /** Check if contents constant declations */
+        if (find.constant(this.req.code)) {
+            let constants = this.req.code.match(/\bconst (.*?) (.*?|[\s\S]*?)\n?as (String|Number|Boolean|Array|Object|Any)/g)
+            constants.forEach(code => {
+                let constant = new Constant({
+                    var: code,
+                    filename: this.req.filename
+                })
+                /** Check types */
+                if (constant.checkType() && constant.checkNoAssignaments(this.req.code)) {
+                    this.req.code = constant.transpile(this.req.code);
                 }
             })
-            resolve();
-        })
+        }
     }
 
     private async vectors() {

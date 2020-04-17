@@ -6,6 +6,10 @@ const BLUE = '\x1b[34m'
 const YELLOW = '\x1b[33m';
 const NORMAL = '\x1b[0m';
 const UNDER = '\x1b[4m'
+const BLACK = "\x1b[30m"
+const BOLD = "\x1b[1m"
+
+import clear from "@config/clear"
 
 interface Response {
     text: string,
@@ -31,13 +35,15 @@ export default class Error {
     }
 
     formatMessage(): void {
-        this.msg += `${BGRED}${WHITE}Error:${NORMAL}${RED} ${this.text}${NORMAL}\n`
+        this.msg += `${NORMAL}${RED}\u{1F98A} \u{1F494} Unfortunately something unexpected happened...\n\n`
+        this.msg += `${BGRED}${BLACK}${BOLD} Error! ${NORMAL}${RED} ${this.text}${NORMAL}\n`
         this.msg += `\t${UNDER}at:${NORMAL} ${this.file} file\n`
         this.msg += `\t${UNDER}${YELLOW}Solution:${NORMAL} ${YELLOW}${this.solution}${NORMAL}\n`
         this.msg += `\t${UNDER}${BLUE}More Info:${NORMAL} ${GREEN}${this.info}${NORMAL}\n`
     }
 
     show(): void {
+        clear()
         console.log(this.msg);
         process.exit(1);
     }

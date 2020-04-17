@@ -78,45 +78,19 @@ export class Program {
         }
     }
 
-    public async run() {
-        this.checkExistance()
-        //await this.main()
-        await this.main()
-        await this.save()
-    }
-
-    // # Function for other kind of compilations (components, etc...)
-    public async exec() {
-        //await this.main()
-        this.checkExistance()
-        await this.main()
-        return beautify(this.req.html)
-    }
-
     public async test() {
-
-    }
-
-    private async main2() {
-        return new Promise(async (resolve, reject) => {
-            // # Compile individual scripts
+        if (this.req.type == "page" || this.req.type == "component") {
+            this.checkExistance()
+            await this.main()
+        } else if (this.req.type == "script") {
             let script = new Script()
-            script.start(this.req.config)
-
-            // # Run Feno Instance
-            //await this.FenoInstance()
-
-            // # Compile external sources
-            await this.externalSources()
-
-            // # Compile Html Document
-            //await this.Document()
-
-            // # Format and beautify code
-            this.req.code = beautify(this.req.code)
-
-            resolve()
-        })
+            script.req = {
+                code: this.req.code,
+                filename: this.req.filename
+            }
+            await script.process()
+            this.req.code = script.req.code
+        }
     }
 
     // # Prepare html document for result
@@ -224,6 +198,10 @@ export class Program {
             await this.layouts(this.req.config)
             // Delete possible layout declaration
             this.req.code = this.req.code.replace(/set layout ['|"|`](.*?)['|"|`]/, "")
+
+            // Transpile script files
+            let script = new Script()
+            await script.start(this.req.config)
 
             // Get and set script tag
             this.req.html = this.req.html.replace(/<script>[\s\S]*<\/script>/, `<script>${this.req.code}</script>`)

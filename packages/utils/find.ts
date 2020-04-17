@@ -34,7 +34,7 @@ export function variable(code: string): boolean {
 }
 
 export function constant(code: string): boolean {
-    if (/const (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/.test(code))
+    if (/\bconst (.*?) (.*?|[\s\S]*?)\n?as (String|Number|Boolean|Array|Object|Any)/.test(code))
         return true
     else
         return false

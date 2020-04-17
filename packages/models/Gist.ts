@@ -57,23 +57,19 @@ export default class Gist {
         }
     }
 
-    public constants(): void {
+    public async constants() {
+        /** Check if contents constant declations */
         if (find.constant(this.code)) {
-            let lines: string[] = this.code.split(/\n/);
-            new Promise((resolve, reject) => {
-                lines.forEach(async line => {
-                    if (find.constant(line)) {
-                        let constant = new Constant({
-                            var: line.match(/const (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/)[0],
-                            filename: this.filename
-                        })
-                        if (constant.checkType() && constant.checkNoAssignaments(this.code)) {
-                            this.html = constant.transpile(this.html);
-                            this.applyVariables(constant.variable_name);
-                        }
-                    }
+            let constants = this.code.match(/\bconst (.*?) (.*?|[\s\S]*?)\n?as (String|Number|Boolean|Array|Object|Any)/g)
+            constants.forEach(code => {
+                let constant = new Constant({
+                    var: code,
+                    filename: this.filename
                 })
-                resolve(this.html);
+                /** Check types */
+                if (constant.checkType() && constant.checkNoAssignaments(this.code)) {
+                    this.code = constant.transpile(this.code);
+                }
             })
         }
     }

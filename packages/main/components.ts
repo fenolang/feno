@@ -185,7 +185,8 @@ export async function test(req: Request) {
             config: req.config,
             code: component_content
         })
-        let transpiled_content = await transpilation.exec()
+        await transpilation.execute()
+        let transpiled_content = transpilation.result
         /** Define content inside a template */
         transpiled_content = transpiled_content.replace(/<body>([\s\S]*?)<\/body>/g, '<template id="doc">$1<template>')
         let component = new Component(component_name[0]);

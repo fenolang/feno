@@ -14,28 +14,27 @@ export default class Variable {
     filename: string = ""
 
     // Types
-    String = `"(.*?)"|'(.*?)'|\`[\\s\\S]*?\``;
-    Number = `[0-9]+`;
-    Boolean = `true|false`;
-    Object = `{[\\s\\S]*?}`;
-    Array = `\[[\\s\\S]*?\]`;
+    String = `["|'|\`].*?["|'|\`]`
+    Number = `\\d`
+    Boolean = `true|false`
+    Object = `{[\\s\\S]*?}`
+    Array = `\[[\\s\\S]*?\]`
 
     constructor(instance: Params) {
-        this.variable = instance.var;
-        this.value = this.variable.match(/const (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/)[3];
-        this.variable_name = this.variable.match(/const (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/)[2];
-        this.type = this.variable.match(/const (String|Number|Boolean|Array|Object|Any) (.*?) ?= ?(.*?|[\s\S]*?);/)[1];
-        this.filename = instance.filename;
+        this.variable = instance.var
+        this.variable_name = this.variable.match(/\bconst (.*?) (.*?|[\s\S]*?)\n?as (String|Number|Boolean|Array|Object|Any)/)[1]
+        this.value = this.variable.match(/\bconst (.*?) (.*?|[\s\S]*?)\n?as (String|Number|Boolean|Array|Object|Any)/)[2]
+        this.type = this.variable.match(/\bconst (.*?) (.*?|[\s\S]*?)\n?as (String|Number|Boolean|Array|Object|Any)/)[3]
+        this.filename = instance.filename
     }
 
     public transpile(code: string): string {
-        let regex = new RegExp(`const ${this.type} ${this.variable_name} ?= ?${this.value};`, 'g');
-        code = code.replace(regex, `const ${this.variable_name} = ${this.value};`);
-        return code;
+        code = code.replace(this.variable, `const ${this.variable_name} = ${this.value};`)
+        return code
     }
 
     public checkNoAssignaments(code: string): boolean {
-        let regex: RegExp = new RegExp(`^[\t| ]*${this.variable_name} ?= ?(.*?);`,'gm');
+        let regex: RegExp = new RegExp(`^[\t| ]*${this.variable_name} ?= ?(.*?)`,'gm')
         if (regex.test(code)) {
             new Error({
                 text: `Cannot assign to '${this.variable_name}' because it is a constant.`,
@@ -57,40 +56,38 @@ export default class Variable {
     }
 
     public checkType() {
+        /** ANY */
+        if (this.type == "Any")
+            return true
         /** STRING */
-        if (/"(.*?)"|'(.*?)'|`(.*?)`/.test(this.value)) {
-            if (this.type == 'String' || this.type == 'Any')
-                return true;
-            else {
-                this.returnError('String');
-            }
-            /** OBJECT */
-        } else if (/{(.*?|[\s\S]*?)}/.test(this.value)) {
-            if (this.type == 'Object' || this.type == 'Any')
+        else if (this.type == "String") {
+            if (!/\d|true|false|{[\s\S]*?}|\[[\s\S]*?\]/.test(this.value))
                 return true
-            else {
-                this.returnError('Object');
-            }
-            /** ARRAY */
-        } else if (/\[(.*?|[\s\S]*?)]/.test(this.value)) {
-            if (this.type == 'Array' || this.type == 'Any')
+            else this.returnError("String")
+        }
+        /** NUMBER */
+        else if (this.type == "Number") {
+            if (!/true|false|{[\s\S]*?}|\[[\s\S]*?\]|["|'|`].*?["|'|`]/.test(this.value))
                 return true
-            else {
-                this.returnError('Array');
-            }
-            /** BOOLEAN */
-        } else if (/true|false/.test(this.value)) {
-            if (this.type == 'Boolean' || this.type == 'Any')
+            else this.returnError("Number")
+        }
+        /** OBJECT */
+        else if (this.type == "Object") {
+            if (!/(?!{)(.*)\d|true|false|\[[\s\S]*?\]|["|'|`].*?["|'|`](?![\s\S]*?})/.test(this.value))
                 return true
-            else {
-                this.returnError('Boolean');
-            }
-        } else if (/\d/.test(this.value)) {
-            if (this.type == 'Number' || this.type == 'Any')
+            else this.returnError("Object")
+        }
+        /** ARRAY */
+        else if (this.type == "Array") {
+            if (!/\d|true|false|{[\\s\\S]*?}|["|'|`].*?["|'|`](?![\s\S]*?\])/.test(this.value))
                 return true
-            else {
-                this.returnError('Number');
-            }
+            else this.returnError("Array")
+        }
+        /** BOOLEAN */
+        else if (this.type == "Boolean") {
+            if (!/\d|{[\s\S]*?}|\[[\s\S]*?\]|["|'|`].*?["|'|`]/.test(this.value))
+                return true
+            else this.returnError("Boolean")
         }
     }
 }

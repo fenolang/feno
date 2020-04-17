@@ -1,6 +1,3 @@
-import Error from '@models/Error';
-import * as find from '@utils/find';
-
 /** Styles function */
 export function $watch(code:string): string {
     if (code) {
