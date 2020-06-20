@@ -32,7 +32,7 @@ export class Transpilation {
                 // Check if appView function is being called                
                 if (/appView\(\)/g.test(layout_data)) {
                     let transpilation = new Program({
-                        type: "page",
+                        type: "layout",
                         filename: this.req.filename,
                         config: config,
                         code: layout_data

@@ -2,6 +2,20 @@
 
 All versions here are available on NPM. Future versions are not included here until they are releashed.
 
+## [1.2.0] (2020-02-15)
+
+### New
+- Reactive data!
+- Compile code without a .feno file
+
+### Changes
+- Cubes now are Vectors!
+
+### Fix
+- Don't apply variables to the document if we're not calling them
+
+-------------------------------------------------
+
 ## [1.0.0] (2020-02-04)
 
 ## New
@@ -12,6 +26,8 @@ All versions here are available on NPM. Future versions are not included here un
 
 ## Fix
 - The NoScript defined in config is applied correctly
+
+-------------------------------------------------
 
 ## [0.9.0-beta] (2020-01-30)
 

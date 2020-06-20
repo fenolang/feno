@@ -35,7 +35,7 @@ export default class Error {
     }
 
     formatMessage(): void {
-        this.msg += `${NORMAL}${RED}\u{1F98A} \u{1F494} Unfortunately something unexpected happened...\n\n`
+        this.msg += `${NORMAL}${RED}🤯 💔 Unfortunately something unexpected happened...\n\n`
         this.msg += `${BGRED}${BLACK}${BOLD} Error! ${NORMAL}${RED} ${this.text}${NORMAL}\n`
         this.msg += `\t${UNDER}at:${NORMAL} ${this.file} file\n`
         this.msg += `\t${UNDER}${YELLOW}Solution:${NORMAL} ${YELLOW}${this.solution}${NORMAL}\n`

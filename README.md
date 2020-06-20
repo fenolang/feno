@@ -1,10 +1,26 @@
 <p align="center">
     <a href="https://fenolang.herokuapp.com" target="_blank">
-        <img src="./next-logo.png" width="100">
+        <img src="./logo.svg" width="100">
     </a>
 </p>
-
 <h2 align="center">Feno</h2>
+<p align="center">
+    <a href="https://github.com/fenolang/feno/blob/master/LICENSE">
+        <img src="https://img.shields.io/npm/l/feno?style=flat-square">
+    </a>
+    <a href="https://npmjs.com/package/feno">
+        <img src="https://img.shields.io/npm/v/feno?style=flat-square">
+    </a>
+    <a href="https://github.com/fenolang/feno">
+        <img src="https://img.shields.io/github/package-json/v/fenolang/feno?label=working-on&style=flat-square">
+    </a>
+    <a href="https://github.com/fenolang/feno">
+        <img src="https://img.shields.io/github/last-commit/fenolang/feno?style=flat-square">
+    </a>
+    <a href="https://npmjs.com/package/feno">
+        <img src="https://img.shields.io/npm/dt/feno?style=flat-square">
+    </a>
+</p>
 
 > Feno is an MIT-licensed open source project. If you'd like to join to the backers team, please consider:
 
@@ -15,7 +31,7 @@
 
 ## Introduction
 
-Feno is a frontend programming language that offers a complete package of new tools to improve the development of static websites. We design each part of Feno in detail focusing on improving the experience of each programmer and at the same time Feno becomes a powerful language by having different functionalities such as: Components, Layouts, Global Storage and at the same time offers tools never seen before. : Meta files, Modules, Vectors and more. All this makes Feno one of the best options to use.
+Feno is a frontend programming language that offers a complete package of new tools to improve the development of static websites. We design each part of Feno in detail focusing on improving the experience of each programmer and at the same time Feno becomes a powerful language by having different functionalities such as: Reactivity, Components, Layouts, Global Storage and at the same time offers tools never seen before. : Meta files, Modules, Vectors and more. All this makes Feno one of the best options to use.
 
 ---
 
@@ -27,8 +43,8 @@ Currently working on `v2.0.0`
 
 The features defined here are not necessarily intended to be in the next version that is released, it is only a look at the future of Feno
 
-- A completely new API, cleaner, easier and stronger syntax
-- Support for CSS Frameworks
+- [x] A completely new API, cleaner, easier and stronger syntax
+- [x] Support for CSS Frameworks
 - Compile Feno code without a .feno file
 - Testing functions
 - Modules ( Feno function )
@@ -82,6 +98,7 @@ You can check the changelog in [our site](https://fenolang.herokuapp.com/roadmap
 ## Stay in touch
 
 - [Twitter](https://twitter.com/fenolang)
+- [Reddit](https://www.reddit.com/user/fenolang)
 - [Blog](https://medium.com/@fenolang)
 
 ## Thanks

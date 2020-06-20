@@ -1,6 +1,6 @@
 import fse from 'fs-extra';
 import path from 'path';
-import Error from '@syntax/models/Error';
+import Error from '@models/Error';
 import { getPublic } from '@config/env';
 
 function showResult(filename: string, exists: boolean): void {

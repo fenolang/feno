@@ -9,6 +9,7 @@ import Script from '@models/Script';
 import * as find from '@utils/find';
 import fse from 'fs-extra';
 import path from 'path';
+import { SetPackages } from "./packages"
 import * as scripts from './scripts';
 import * as styles from './styles';
 import * as layouts from './layouts';
@@ -73,6 +74,9 @@ export class Program {
             await this.main()
             await this.save()
         } else if (this.req.type == "component") {
+            this.checkExistance()
+            await this.main()
+        } else if (this.req.type == "layout") {
             this.checkExistance()
             await this.main()
         }
@@ -194,6 +198,10 @@ export class Program {
                 this.req.html = this.req.html.replace(/<head>([\s\S]*?)<\/head>/, `<head>$1\n\n${inline_styles}</head>`)
             }
 
+            // Set packages
+            if (this.req.type == "page")
+                this.req.html = await SetPackages(this.req.html)
+
             // Get and set layout
             await this.layouts(this.req.config)
             // Delete possible layout declaration
@@ -258,7 +266,7 @@ export class Program {
         this.req.html = this.req.html.replace(/newTab/g, 'target="_blank"');
         this.req.html = this.req.html.replace(/Val="(.*?)"/g, 'value="$1"');
         this.req.html = this.req.html.replace(/To="(.*?)"/g, 'href="$1"');
-        this.req.html = this.req.html.replace(/onChange="(.*?)"/g, 'oninput="$1(this.value)"');
+        this.req.html = this.req.html.replace(/onChange="(.*?)"/g, 'oninput="$1.set(this.value)"');
     }
 
     private async externalSources() {

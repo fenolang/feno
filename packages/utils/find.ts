@@ -48,7 +48,7 @@ export function vector(code: string): boolean {
 }
 
 export function state(code: string): boolean {
-    if (/declare State .*?: ?.*?;/.test(code))
+    if (/\bdeclare (.*?) (.*?|[\s\S]*?)\n?as State/.test(code))
         return true
     else
         return false
