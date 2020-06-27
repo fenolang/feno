@@ -47,7 +47,7 @@ export class Program {
         type: "",
         filename: "",
         code: "",
-        html: `<!DOCTYPE html>\n<html lang="es">\n<head>\n</head>\n<body></body>\n<script>\n</script>\n</html>`,
+        html: `<!DOCTYPE html>\n<html lang="es">\n<head>\n</head>\n<body></body>\n</html>`,
         config: {
             port: 0,
             scriptsDir: "",
@@ -212,18 +212,20 @@ export class Program {
             await script.start(this.req.config)
 
             // Get and set script tag
-            this.req.html = this.req.html.replace(/<script>[\s\S]*<\/script>/, `<script>${this.req.code}</script>`)
+            this.req.html = this.req.html.replace(/<body>([\s\S]*?)<\/body>/, `<body>$1\n<script>\n${this.req.code}\n</script>\n</body>`)
 
             // Transpile javascript code in script tag
             let gist = new Gist({ filename: this.req.filename, html: this.req.html })
-            gist.variables()
+            await gist.variables()
             gist.constants()
-            gist.state_properties()
+            await gist.state_properties()
             await gist.vectors()
             this.req.html = gist.getContent()
 
             let script_tag = this.req.html.match(/<script>([\s\S]*)<\/script>/)[1]
-            this.req.html = this.req.html.replace(/<script>[\s\S]*<\/script>/, `<script>${beautifyjs(script_tag)}</script>`)
+            this.req.html = this.req.html.replace(/<script>[\s\S]*<\/script>/, `<script>\n${beautifyjs(script_tag)}\n</script>`)
+
+            this.req.html = beautify(this.req.html)
 
             resolve()
 
@@ -266,7 +268,7 @@ export class Program {
         this.req.html = this.req.html.replace(/newTab/g, 'target="_blank"');
         this.req.html = this.req.html.replace(/Val="(.*?)"/g, 'value="$1"');
         this.req.html = this.req.html.replace(/To="(.*?)"/g, 'href="$1"');
-        this.req.html = this.req.html.replace(/onChange="(.*?)"/g, 'oninput="$1.set(this.value)"');
+        this.req.html = this.req.html.replace(/onChange="(.*?)"/g, 'oninput="$1 = this.value"');
     }
 
     private async externalSources() {

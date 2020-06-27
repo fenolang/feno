@@ -51,7 +51,7 @@ async function OptionIsDefined(data: string, option: string, is_dir: boolean):Pr
     })
 }
 
-async function Config(): Promise<Configuration> {
+export async function Config(): Promise<Configuration> {
     return new Promise(async (resolve, reject) => {
         let config: Configuration = {
             port: 4000,

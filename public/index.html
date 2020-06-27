@@ -2,39 +2,60 @@
 <html lang="es">
 
 <head>
-    <title>Bienvenido</title>
-
-    <meta charset="utf-8">
 
     <noscript>
-        <p>Necesito JS!</p>
     </noscript>
 
-    <!-- JS SCRIPTS -->
-    <script src="/scripts/components.js"></script>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap">
 </head>
 
 <body>
-    <h1>
-        <slot name="email"></slot>
-    </h1>
-    <input type="email" class="form-control" placeholder="Email" oninput="email.set(this.value)">
+    <div class="container">
+        <img src="/static/logo.svg" alt="" width="100">
+        <p class="title">Feno</p>
+        <p class="subtitle">Tu nombre es: <slot name="usuario.nombre "></slot>
+        </p>
+        <p class="subtitle">Tu apellido es: <slot name="usuario.apellido "></slot>
+        </p>
+        <input type="text" name="nombre" placeholder="Nombre" oninput="handleInput(event)">
+        <input type="text" name="apellido" placeholder="Apellido" oninput="handleInput(event)">
+    </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script>
+        var _usuario = {
+            nombre: "",
+            apellido: ""
+        };
+        Object.defineProperty(this, 'usuario', {
+            enumerable: true,
+            get: function() {
+                return _usuario;
+            },
+            set: function(v) {
+                _usuario = v;
+
+                document.querySelector('[name="usuario.nombre "]').innerHTML = _usuario.nombre;
+
+                document.querySelector('[name="usuario.apellido "]').innerHTML = _usuario.apellido;
+
+            }
+        })
+
+        function handleInput(event) {
+            usuario = {
+                ...usuario,
+                [event.target.name]: event.target.value
+            }
+        }
+
+
+
+        document.querySelector('[name="usuario.nombre "]').innerHTML = _usuario.nombre;
+        document.querySelector('[name="usuario.apellido "]').innerHTML = _usuario.apellido;
+    </script>
 </body>
-<script>let email = {
-    v: "",
-    set(new_val) {
-        email.v = new_val
-        document.querySelector('[name="email"]').innerHTML = email.v
-    }
-}
-
-
-document.querySelector('[name="email"]').innerHTML = email.v;</script>
 
 </html>

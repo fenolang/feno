@@ -33,10 +33,10 @@ export default class Variable {
         return code;
     }
 
-    private returnError(type: string) {
+    private TypeDeclarationError() {
         new Error({
-            text: `Type '${type}' is not assignable to type '${this.type}'.`,
-            at: `${this.variable} in ${this.filename}.feno`,
+            text: `Type '${this.RealType()}' is not assignable to type '${this.type}'.`,
+            at: `${this.variable_name} variable in ${this.filename}.feno`,
             solution: `Check that your types are correctly defined in ${this.filename}.feno file`,
             info: `https://fenolang.herokuapp.com/docs/typing`
         })
@@ -54,9 +54,8 @@ export default class Variable {
     public checkAssignmentTypes(code: string) {
         let regex: RegExp;
 
-        if (this.type == 'String') {
+        if (this.type == 'String')
             regex = new RegExp(`${this.variable_name} ?= ?(${this.Number}|${this.Boolean}|${this.Object}|${this.Array})`, 'gm');
-        }
         else if (this.type == 'Number')
             regex = new RegExp(`${this.variable_name} ?= ?(${this.String}|${this.Boolean}|${this.Object}|${this.Array})`, 'gm');
         else if (this.type == 'Boolean')
@@ -66,10 +65,25 @@ export default class Variable {
         else if (this.type == 'Array')
             regex = new RegExp(`${this.variable_name} ?= ?(${this.Number}|${this.Boolean}|${this.Object}|${this.String})`, 'gm');
 
-        if (regex.test(code))
+        if (this.type != "Any" && regex.test(code))
             this.returnAssignmentError(this.type);
         else
             return true
+    }
+
+    public RealType() {
+        if (/\[[\s\S]*?\]/.test(this.value))
+            return "Array"
+        else if (/{[\s\S]*?}/.test(this.value))
+            return "Object"
+        else if (/true|false/.test(this.value))
+            return "Boolean"
+        else if (/["|'|`].*?["|'|`]/.test(this.value))
+            return "String"
+        else if (/(?!{)(.*)\d/.test(this.value))
+            return "Number"
+        else
+            return "Any"
     }
 
     public checkType() { 
@@ -80,31 +94,31 @@ export default class Variable {
         else if (this.type == "String") {
             if (!/\d|true|false|{[\s\S]*?}|\[[\s\S]*?\]/.test(this.value))
                 return true
-            else this.returnError("String")
+            else this.TypeDeclarationError()
         }
         /** NUMBER */
         else if (this.type == "Number") {
             if (!/true|false|{[\s\S]*?}|\[[\s\S]*?\]|["|'|`].*?["|'|`]/.test(this.value))
                 return true
-            else this.returnError("Number")
+            else this.TypeDeclarationError()
         }
         /** OBJECT */
         else if (this.type == "Object") {
             if (!/(?!{)(.*)\d|true|false|\[[\s\S]*?\]|["|'|`].*?["|'|`](?![\s\S]*?})/.test(this.value))
                 return true
-            else this.returnError("Object")
+            else this.TypeDeclarationError()
         }
         /** ARRAY */
         else if (this.type == "Array") {
             if (!/\d|true|false|{[\\s\\S]*?}|["|'|`].*?["|'|`](?![\s\S]*?\])/.test(this.value))
                 return true
-            else this.returnError("Array")
+            else this.TypeDeclarationError()
         }
         /** BOOLEAN */
         else if (this.type == "Boolean") {
             if (!/\d|{[\s\S]*?}|\[[\s\S]*?\]|["|'|`].*?["|'|`]/.test(this.value))
                 return true
-            else this.returnError("Boolean")
+            else this.TypeDeclarationError()
         }
     }
 }

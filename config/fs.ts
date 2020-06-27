@@ -14,53 +14,28 @@ interface Folder {
     path: string
 }
 
-export function createFoldersOnPath(folders: FolderOnSameRoute) {
-    return new Promise((resolve, reject) => {
-        folders.names.forEach(name => {
-            fse.mkdirs(`${folders.route}/${name}`, (err: string) => {
-                if (err) return console.error(err);
-            })
-        })
-        resolve();
-    })
+export async function createFoldersOnPath(folders: FolderOnSameRoute) {
+    for await (let name of folders.names) {
+        await fse.mkdirs(`${folders.route}/${name}`)
+    }
 }
 
-export function createFolders(folders: Folder[]) {
-    return new Promise((resolve, reject) => {
-        folders.forEach(folder => {
-            fse.mkdirs(`${folder.path}`, (err: string) => {
-                if (err) return console.error(err);
-            })
-        })
-        resolve();
-    })
+export async function createFolders(folders: Folder[]) {
+    for await (let folder of folders) {
+        await fse.mkdirs(`${folder.path}`)
+    }
 }
 
-export function createFolder(folder: string) {
-    return new Promise ((resolve, reject) => {
-        fse.mkdirs(`${folder}`, (err: string) => {
-            if (err) return console.error(err);
-        })
-        resolve();
-    })
+export async function createFolder(folder: string) {
+    await fse.mkdirs(`${folder}`)
 }
 
-export function writeFiles(files: File[]) {
-    return new Promise((resolve, reject) => {
-        files.forEach(file => {
-            fse.writeFile(file.route, file.content, (err: string) => {
-                if (err) return console.error(err);
-            })
-        })
-        resolve();
-    })
+export async function writeFiles(files: File[]) {
+    for await (let file of files) {
+        await fse.writeFile(file.route, file.content)
+    }
 }
 
-export function writeFile(file: File) {
-    return new Promise((resolve, reject) => {
-        fse.writeFile(file.route, file.content, (err: string) => {
-            if (err) return console.error(err);
-        })
-        resolve();
-    })
+export async function writeFile(file: File) {
+    await fse.writeFile(file.route, file.content)
 }

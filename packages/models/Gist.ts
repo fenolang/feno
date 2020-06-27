@@ -28,7 +28,33 @@ export default class Gist {
         this.html = this.html.replace(/<script>[\s\S]*?<\/script>/, functions(this.html.match(/<script>[\s\S]*?<\/script>/)[0]))
     }
     
-    private applyVariables(variable: string): void {
+    private async applyVariables(type: string, variable: string) {
+        if (type == "Array") {
+            let interpolation = `{{ ?(${variable}\\[[0-9]\\]?\\..*?) ?}}`
+            let regex = new RegExp(interpolation, 'g')
+            if (regex.test(this.html)) {
+                for await (let x of this.html.match(regex)) {
+                    let body = new RegExp(interpolation)
+                    let elements = x.match(body)
+                    this.html = this.html.replace(elements[0], `<slot name="${elements[1]}"></slot>`)
+                    let apply_code = `document.querySelector('[name="${elements[1]}"]').innerHTML = ${elements[1]};`
+                    this.html = this.html.replace(/<script>([\s\S]*?)<\/script>/, `<script>$1\n${apply_code}</script>`)
+                }
+            }
+        } else if (type == "Object") {
+            let interpolation = `{{ ?(${variable}\\..*?) ?}}`
+            let regex = new RegExp(interpolation, 'g')
+            if (regex.test(this.html)) {
+                for await (let match of this.html.match(regex)) {
+                    let body = new RegExp(interpolation)
+                    let elements = match.match(body)
+                    this.html = this.html.replace(elements[0], `<slot name="${elements[1]}"></slot>`)
+                    let apply_code = `document.querySelector('[name="${elements[1]}"]').innerHTML = ${elements[1]};`
+                    this.html = this.html.replace(/<script>([\s\S]*?)<\/script>/, `<script>$1\n${apply_code}</script>`)
+                }
+            }
+        }
+
         // Set slots
         let regex = new RegExp(`{{ ?${variable} ?}}`,'g')
         // # Check if a variable is being called on the document instance
@@ -44,16 +70,16 @@ export default class Gist {
     public async variables() {
         if (find.variable(this.code)) {
             let variables = this.code.match(/\bdef (.*?) (.*?|[\s\S]*?)\n?as (String|Number|Boolean|Array|Object|Any)/g)
-            variables.forEach(code => {
+            for await (let code of variables) {
                 let variable = new Variable({
                     var: code,
                     filename: this.filename
                 })
                 if (variable.checkType() && variable.checkAssignmentTypes(this.code)) {
                     this.html = variable.transpile(this.html);
-                    this.applyVariables(variable.variable_name);
+                    await this.applyVariables(variable.type, variable.variable_name);
                 }
-            })
+            }
         }
     }
 
@@ -85,19 +111,19 @@ export default class Gist {
     }
 
     public async vectors() {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             // # Find a vector
             if (find.vector(this.code)) {
                 let vector_matches = this.code.match(/declare Vector .*? ?{[\s\S]*?}/g);
                 // For every vector
-                vector_matches.forEach(async vector_match => {
+                for await (let vector_match of vector_matches) {
                     let vector = new Vector(vector_match, this.filename);
                     // # Transpile code of vector
                     await vector.transpile(this.html);
                     this.html = vector.result;
                     // # Transpile code of vector properties
                     this.html = this.html.replace(/<script>[\s\S]*?<\/script>/, functions(this.html.match(/<script>[\s\S]*?<\/script>/)[0]))
-                })
+                }
                 resolve();
             } else {
                 resolve();

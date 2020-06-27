@@ -2,33 +2,34 @@ import fse from 'fs-extra';
 import * as fs from './fs'
 import clear from './clear';
 import { getPublic } from './env';
-import * as feno from '../index';
+import { Config, run } from '../index';
+import c from "./utils"
 const base = process.cwd()
 
-async function build() {
+async function Build() {
     return new Promise(async (resolve, reject) => {
-        await feno.run()
-        clear();
-        fse.copy(getPublic(), `${base}/dist`, (err: string) => {
-            if (err) return console.error(err);
-        })
+        let config = await Config()
+        await run()
+        clear()
+        await fse.copy(getPublic(), `${base}/${config.outDir}`)
         resolve();
     })
 }
 
-async function init() {
+async function Init() {
     await fs.createFolder(`${base}/src`);
     await fs.createFoldersOnPath({
         route: `${base}/src`,
         names: ["layouts", "components", "meta", "pages", "scripts", "styles"]
     })
     await fs.writeFile({ route: `${base}/src/pages/index.feno`, content: "" });
-    let config_content: string = `{\n\toutDir: "",\n\tscriptsDir: "",\n\tstylesDir: ""\n}`
-    await fs.writeFile({ route: `${base}/feconfig.feno`, content: config_content});
+    let config_content: string = `{\n\tport: "4000"\n\toutDir: "",\n\tscriptsDir: "",\n\tstylesDir: ""\n\tnoScript: {\n\t}\n}`
+    await fs.writeFile({ route: `${base}/src/feconfig.feno`, content: config_content});
+    await fs.writeFile({ route: `${base}/src/packages.feno`, content: "" })
     await fs.writeFile({ route: `${base}/nodemon.json`, content: `{\n\t"ext": "feno"\n}` });
 }
 
-async function folders() {
+async function Folders() {
     await fs.createFolder(`${base}/src`);
     await fs.createFoldersOnPath({
         route: `${base}/src`,
@@ -36,45 +37,79 @@ async function folders() {
     })
 }
 
-async function files() {
-    await fs.writeFile({ route: `${base}/src/pages/index.feno`, content: "" });
-    let config_content: string = `{\n\toutDir: "",\n\tscriptsDir: "",\n\tstylesDir: ""\n}`
-    await fs.writeFile({ route: `${base}/feconfig.feno`, content: config_content });
-    await fs.writeFile({ route: `${base}/nodemon.json`, content: `{\n\t"ext": "feno"\n}` });
+async function Files() {
+    let src_folder = await fse.pathExists(`${base}/src`)
+    if (src_folder) {
+        await fs.createFolder(`${base}/src/pages`)
+        await fs.writeFile({ route: `${base}/src/pages/index.feno`, content: "" })
+        let config_content: string = `{\n\tport: "4000"\n\toutDir: "",\n\tscriptsDir: "",\n\tstylesDir: ""\n\tnoScript: {\n\t}\n}`
+        await fs.writeFile({ route: `${base}/src/feconfig.feno`, content: config_content })
+        await fs.writeFile({ route: `${base}/src/packages.feno`, content: "" })
+        await fs.writeFile({ route: `${base}/nodemon.json`, content: `{\n\t"ext": "feno"\n}` })
+        console.log(`\n${c.NORMAL}🧪 💗 Using ${c.GREEN}${c.BOLD}Feno v${c.VERSION}\n`)
+        console.log(`${c.BOLD}${c.BLUE}\u{2139}${c.WHITE} Files created successfully!${c.NORMAL}\n`)
+    } else {
+        console.log(`\n${c.NORMAL}${c.RED}🤯 💔 Unfortunately something unexpected happened...\n`)
+        console.log(`${c.BOLD}${c.BLUE}\u{2139}${c.WHITE} I couldn't find the src/ folder!${c.NORMAL}\n`)
+    }
 }
 
-async function configfile() {
-    let config_content: string = `{\n\toutDir: "",\n\tscriptsDir: "",\n\tstylesDir: ""\n}`
-    await fs.writeFile({ route: `${base}/feconfig.feno`, content: config_content });
+async function ConfigFile() {
+    let src_folder = await fse.pathExists(`${base}/src`)
+    let config_content: string = `{\n\tport: "4000"\n\toutDir: "",\n\tscriptsDir: "",\n\tstylesDir: ""\n\tnoScript: {\n\t}\n}`
+    if (src_folder) {
+        await fs.writeFile({ route: `${base}/src/feconfig.feno`, content: config_content })
+        console.log(`\n${c.NORMAL}🧪 💗 Using ${c.GREEN}${c.BOLD}Feno v${c.VERSION}\n`)
+        console.log(`${c.BOLD}${c.BLUE}\u{2139}${c.WHITE} Config file created successfully!${c.NORMAL}\n`)
+    } else {
+        console.log(`\n${c.NORMAL}${c.RED}🤯 💔 Unfortunately something unexpected happened...\n`)
+        console.log(`${c.BOLD}${c.BLUE}\u{2139}${c.WHITE} I couldn't find the src/ folder!${c.NORMAL}\n`)
+    }
 }
 
-async function nodemonfile() {
-    await fs.writeFile({ route: `${base}/nodemon.json`, content: `{\n\t"ext": "feno"\n}` });
+async function PackagesFile() {
+    let src_folder = await fse.pathExists(`${base}/src`)
+    if (src_folder) {
+        await fs.writeFile({ route: `${base}/src/packages.feno`, content: "" })
+        console.log(`\n${c.NORMAL}🧪 💗 Using ${c.GREEN}${c.BOLD}Feno v${c.VERSION}\n`)
+        console.log(`${c.BOLD}${c.BLUE}\u{2139}${c.WHITE} Config file created successfully!${c.NORMAL}\n`)
+    } else {
+        console.log(`\n${c.NORMAL}${c.RED}🤯 💔 Unfortunately something unexpected happened...\n`)
+        console.log(`${c.BOLD}${c.BLUE}\u{2139}${c.WHITE} I couldn't find the src/ folder!${c.NORMAL}\n`)
+    }
 }
 
-async function load() {
+async function NodemonFile() {
+    await fs.writeFile({ route: `${base}/nodemon.json`, content: `{\n\t"ext": "feno"\n}` })
+}
+
+async function Load() {
     if (process.argv.includes('init')) {
-        init()
-        console.log(`< \u{1F4E6}  Work environment created successfully!`);
+        Init()
+        console.log(`\n${c.NORMAL}🧪 💗 Using ${c.GREEN}${c.BOLD}Feno v${c.VERSION}\n`)
+        console.log(`${c.BOLD}${c.BLUE}\u{2139}${c.WHITE} Work environment created successfully!${c.NORMAL}\n`)
     } else {
         if (process.argv.includes('generate')) {
             if (process.argv.includes('folders')) {
-                folders()
-                console.log(`< \u{1F4E6}  Folders created successfully!`)
+                Folders()
+                console.log(`\n${c.NORMAL}🧪 💗 Using ${c.GREEN}${c.BOLD}Feno v${c.VERSION}\n`)
+                console.log(`${c.BOLD}${c.BLUE}\u{2139}${c.WHITE} Folders created successfully!${c.NORMAL}\n`)
             } else if (process.argv.includes('files')) {
-                files()
-                console.log(`< \u{1F4E6}  Files created successfully!`)
+                Files()
             } else if (process.argv.includes('config')) {
-                configfile()
-                console.log(`< \u{1F4E6}  Config file created successfully!`)
+                ConfigFile()
             } else if (process.argv.includes('nmfile')) {
-                nodemonfile()
-                console.log(`< \u{1F4E6}  Nodemon file created successfully!`)
+                NodemonFile()
+                console.log(`\n${c.NORMAL}🧪 💗 Using ${c.GREEN}${c.BOLD}Feno v${c.VERSION}\n`)
+                console.log(`${c.BOLD}${c.BLUE}\u{2139}${c.WHITE} Nodemon file created successfully!${c.NORMAL}\n`)
+            } else if (process.argv.includes('packages')) {
+                PackagesFile()
             }
         } else {
             if (process.argv.includes('build')) {
-                await build()
-                console.log(`< \u{1F4E6}  Production files created successfully!`)
+                //await Build()
+                console.log(`\n${c.NORMAL}🧪 💗 Using ${c.GREEN}${c.BOLD}Feno v${c.VERSION}\n`)
+                console.log(`${c.BOLD}${c.BLUE}\u{2139}${c.WHITE} Production files created successfully!${c.NORMAL}\n`)
             }
         }
     }
@@ -83,6 +118,6 @@ async function load() {
 clear();
 
 new Promise(async (resolve, reject) => {
-    await load();
+    await Load();
     resolve();    
 })

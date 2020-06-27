@@ -1,0 +1,49 @@
+* {
+    text-decoration: none;
+    font-family: 'Lato', sans-serif;
+}
+
+.container {
+    background: #000;
+    width: 500px;
+    margin: auto;
+    text-align: center;
+    margin-top: 60px;
+    padding-top: 60px;
+    padding-bottom: 100px;
+}
+
+.container img {
+    margin-bottom: 15px;
+}
+
+.title {
+    line-height: 1;
+    margin: 0;
+    font-size: 80px;
+    font-weight: 900;
+    color: white;
+}
+
+.subtitle {
+    font-size: 15px;
+    margin-bottom: 40px;
+    color: white;
+}
+
+.docs-button {
+    background: none;
+    padding: 15px;
+    border: 2px solid #fff;
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: bold;
+    color: white;
+    letter-spacing: 3px;
+    margin-right: 3px;
+}
+
+.docs-button:hover {
+    background: white;
+    color: black;
+}
